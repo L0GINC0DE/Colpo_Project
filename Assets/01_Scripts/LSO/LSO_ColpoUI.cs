@@ -13,13 +13,13 @@ public class LSO_ColpoUI : MonoBehaviour, IPointerDownHandler, IPointerUpHandler
       [SerializeField] private GameObject hinge;
       
       private float originalPosZ;
-      private float _originalRotY;
+      private float originalRotY;
 
       void Awake()
       {
          // 버튼의 원래 위치
          originalPosZ = playerCam.transform.position.z;
-         _originalRotY = hinge.transform.eulerAngles.y;
+         originalRotY = hinge.transform.eulerAngles.y;
       }
    
 
@@ -52,7 +52,7 @@ public class LSO_ColpoUI : MonoBehaviour, IPointerDownHandler, IPointerUpHandler
          
          hinge.transform.DORotate(new Vector3(
             playerCam.transform.rotation.eulerAngles.x,
-            _originalRotY,
+            originalRotY,
             playerCam.transform.rotation.eulerAngles.z) , duration).SetUpdate(true);
          
          isHolding = false;
@@ -68,6 +68,6 @@ public class LSO_ColpoUI : MonoBehaviour, IPointerDownHandler, IPointerUpHandler
       //버튼을 누르는 동안에
       private void OnHold()
       {
-         handle.transform.Rotate(Vector3.up * 10 * Time.deltaTime);
+         //handle.transform.Rotate(new Vector3())
       }
 }
