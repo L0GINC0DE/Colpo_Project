@@ -3,12 +3,6 @@ using UnityEditor;
 using UnityEditor.SceneManagement;
 using UnityEngine;
 
-// [기획용 툴] GraphMapSetup 전용 Scene 뷰 맵 편집기. Editor 폴더에 있어서 빌드에는 포함되지 않는다.
-//
-//   Select 모드 (기본) : 노드 클릭 = 선택, 선택된 노드는 드래그로 위치 이동
-//   Add Node 모드      : 빈 곳 클릭 = 그 자리에 새 노드 생성
-//   Connect 모드       : 노드 두 개를 순서대로 클릭 = 두 노드 사이 간선 연결/해제 토글
-//   선택된 노드가 있을 때 Delete/Backspace = 노드 삭제 (다른 노드의 연결 정보도 함께 정리)
 [CustomEditor(typeof(GraphMapSetup))]
 public class GraphMapSetupEditor : Editor
 {

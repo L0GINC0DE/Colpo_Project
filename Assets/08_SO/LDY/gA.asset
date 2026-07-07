@@ -15,7 +15,7 @@ MonoBehaviour:
   gangName: Direct
   type: 0
   riskLevel: 0
-  maxFunds: 100
-  currentFunds: 100
+  maxFunds: 1000
+  currentFunds: 1000
   currentNodeId: gA
   damageResistance: 0

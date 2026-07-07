@@ -15,7 +15,7 @@ MonoBehaviour:
   gangName: Scale
   type: 3
   riskLevel: 0
-  maxFunds: 100
-  currentFunds: 100
+  maxFunds: 1000
+  currentFunds: 1000
   currentNodeId: gD
   damageResistance: 0.05

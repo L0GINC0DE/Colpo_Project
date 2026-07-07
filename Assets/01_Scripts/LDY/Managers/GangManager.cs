@@ -1,8 +1,6 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-// [내부 구현] 씬의 모든 GangController를 관리하는 싱글톤.
-// 팀원 코드에서 직접 호출해도 되는 public API: GetGangInfo / GetAllGangs / StealFrom.
 public class GangManager : MonoBehaviour
 {
     public static GangManager Instance { get; private set; }
@@ -31,8 +29,6 @@ public class GangManager : MonoBehaviour
         GameEvents.OnColpoResult -= HandleColpoResult;
     }
 
-    // ----- 팀원 공용 API -----
-
     public GangData GetGangInfo(string gangId)
     {
         GangController controller = FindController(gangId);
@@ -58,7 +54,6 @@ public class GangManager : MonoBehaviour
 
         GangData data = controller.gangData;
 
-        // 피해 둔감도(damageResistance)만큼 훔칠 수 있는 금액이 줄어든다.
         int mitigated = Mathf.RoundToInt(amount * (1f - data.damageResistance));
         int actualStolen = Mathf.Min(mitigated, data.currentFunds);
 
@@ -122,9 +117,7 @@ public class GangManager : MonoBehaviour
         }
         return null;
     }
-
-    // TurnManager가 매 턴 모든 갱단을 순회하기 위한 내부용 접근자.
-    // 팀원 코드는 GangController를 직접 다루지 말고 GetAllGangs()/GetGangInfo()를 사용할 것.
+    
     public List<GangController> GetAllGangControllers()
     {
         return gangControllers;

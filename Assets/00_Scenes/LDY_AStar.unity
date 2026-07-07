@@ -151,6 +151,7 @@ MonoBehaviour:
   gangData: {fileID: 11400000, guid: 431b99ea9c9e7d74eb16158cab84710e, type: 2}
   pursuing: 0
   playerBaseId: base
+  moveDuration: 0.4
 --- !u!4 &153648055
 Transform:
   m_ObjectHideFlags: 0
@@ -244,6 +245,7 @@ MonoBehaviour:
   gangData: {fileID: 11400000, guid: 0342a2f62c5f3da4694392f3f2db5e32, type: 2}
   pursuing: 0
   playerBaseId: base
+  moveDuration: 0.4
 --- !u!4 &481269462
 Transform:
   m_ObjectHideFlags: 0
@@ -424,10 +426,10 @@ MonoBehaviour:
   m_GameObject: {fileID: 692769358}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: b25a87bf698d03e4bb6d10b7f89b2b81, type: 3}
+  m_Script: {fileID: 11500000, guid: 6c72da97cc841d34784808b5b2599e47, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::GangClickHandler
-  stealAmount: 10
+  m_EditorClassIdentifier: Assembly-CSharp::AtmClickHandler
+  stealAmount: 0
 --- !u!1 &901191724
 GameObject:
   m_ObjectHideFlags: 0
@@ -504,6 +506,7 @@ MonoBehaviour:
   gangData: {fileID: 11400000, guid: 82f74af5df847704f86bdedc13ccea24, type: 2}
   pursuing: 0
   playerBaseId: base
+  moveDuration: 0.4
 --- !u!4 &1647697627
 Transform:
   m_ObjectHideFlags: 0
@@ -656,6 +659,7 @@ MonoBehaviour:
   gangData: {fileID: 11400000, guid: 7f11f0be007ac874d8585fbcd6bf94ce, type: 2}
   pursuing: 0
   playerBaseId: base
+  moveDuration: 0.4
 --- !u!4 &1724091212
 Transform:
   m_ObjectHideFlags: 0

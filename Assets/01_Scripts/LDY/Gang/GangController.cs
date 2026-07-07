@@ -1,29 +1,44 @@
 using System;
 using System.Collections.Generic;
+using DG.Tweening;
 using UnityEngine;
 
-// [내부 구현] 갱단 하나의 이동 AI. GangData(팀 공유 데이터)를 참조해서
-// 성향(GangType)에 따라 다른 규칙으로 노드 그래프 위를 이동한다.
 public class GangController : MonoBehaviour
 {
     public GangData gangData;
     public bool pursuing;
     public string playerBaseId = "base";
 
+    [SerializeField] private float moveDuration = 0.4f;
+
     // 직진파(Direct) 전용 캐시.
     // 추적을 시작하면 A*를 딱 한 번만 계산해서 저장해두고, 이후에는 매 턴 재탐색하지 않고
-    // 이 경로를 그대로 따라간다. (다른 성향과 달리 "한 번 정한 길로 우직하게 직진"하는 것이
-    // 직진파의 개성이기 때문 - 재탐색을 안 하므로 벽에 막히면 뚫릴 때까지 그냥 기다린다.)
+    // 이 경로를 그대로 따라간다.
     private List<string> cachedPath;
     private int cachedPathIndex;
 
-    // 플레이 모드에서 실제로 보이는 갱단 마커. 성향별로 색을 다르게 줘서 구분하기 쉽게 한다.
     private void Start()
     {
         if (GraphMapSetup.Instance != null && GraphMapSetup.Instance.Nodes.TryGetValue(gangData.currentNodeId, out MapNode node))
             transform.position = node.position;
 
         MapVisualFactory.CreateMarker($"GangVisual_{gangData.gangName}", transform, transform.position, 0.7f, GetGangColor(gangData.type), keepCollider: true);
+    }
+
+    private void OnEnable()
+    {
+        GameEvents.OnGangDefeated += HandleGangDefeated;
+    }
+
+    private void OnDisable()
+    {
+        GameEvents.OnGangDefeated -= HandleGangDefeated;
+    }
+
+    private void HandleGangDefeated(string gangId)
+    {
+        if (gangData != null && gangData.gangName == gangId)
+            gameObject.SetActive(false);
     }
 
     private static Color GetGangColor(GangType type)
@@ -44,14 +59,10 @@ public class GangController : MonoBehaviour
         switch (gangData.type)
         {
             case GangType.Scale:
-                // 턴이 지날수록 단단해지는 왕귀파.
-                // 상한을 0.8로 둔 이유: 1.0이 되면 절대 못 터는(영원히 무적인) 갱단이 생겨
-                // 밸런스가 무너지기 때문.
                 gangData.damageResistance = Mathf.Min(0.8f, turnCount * 0.05f);
                 break;
 
             case GangType.Tanker:
-                // 탱커파는 이번 단계에서는 둔감도 고정값만 세팅하고, 이동 로직은 미구현.
                 gangData.damageResistance = 0.3f;
                 break;
         }
@@ -71,7 +82,6 @@ public class GangController : MonoBehaviour
 
             case GangType.Greedy:
                 {
-                    // 훔긴 금액 누적치 = maxFunds - currentFunds
                     int stolenSoFar = gangData.maxFunds - gangData.currentFunds;
                     int speed = 1 + stolenSoFar / 250;
                     ProcessSpeedMove(pathfinder, isEdgeBlocked, speed);
@@ -91,9 +101,6 @@ public class GangController : MonoBehaviour
         }
     }
 
-    // 직진파: 캐싱된 경로를 한 칸(속도 1)씩 따라간다.
-    // 다음 칸으로 가는 간선이 막혀 있으면 재탐색 없이 그 자리에서 대기하고,
-    // 벽이 풀리면(TurnManager가 매 턴 RemoveExpired를 호출해주므로) 다음 턴에 자동으로 다시 전진한다.
     private void ProcessDirect(AStarPathfinder pathfinder, Func<string, string, bool> isEdgeBlocked)
     {
         if (cachedPath == null)
@@ -113,7 +120,6 @@ public class GangController : MonoBehaviour
         MoveTo(nextNode);
     }
 
-    // 지능파: 매 턴 막힌 길을 반영해서 새로 탐색한다 -> 막힌 길은 A*가 알아서 우회한다.
     private void ProcessIntelligent(AStarPathfinder pathfinder, Func<string, string, bool> isEdgeBlocked)
     {
         List<string> path = pathfinder.FindPath(gangData.currentNodeId, playerBaseId, isEdgeBlocked);
@@ -178,15 +184,56 @@ public class GangController : MonoBehaviour
     private void MoveTo(string nodeId)
     {
         Debug.Log($"[{gangData.gangName}] {gangData.currentNodeId} -> {nodeId} 이동");
+
+        MapNode fromNode = null;
+        MapNode toNode = null;
+        if (GraphMapSetup.Instance != null)
+        {
+            GraphMapSetup.Instance.Nodes.TryGetValue(gangData.currentNodeId, out fromNode);
+            GraphMapSetup.Instance.Nodes.TryGetValue(nodeId, out toNode);
+        }
+
         gangData.currentNodeId = nodeId;
 
-        if (GraphMapSetup.Instance != null && GraphMapSetup.Instance.Nodes.TryGetValue(nodeId, out MapNode node))
-            transform.position = node.position; // 애니메이션 없이 즉시 스냅 이동 (연출은 이번 단계에서 생략)
+        if (fromNode != null && toNode != null)
+        {
+            transform.DOKill();
+            transform.DOMove(toNode.position, moveDuration).SetEase(Ease.InOutSine);
+            PlayMoveTrail(fromNode, toNode);
+        }
 
         if (nodeId == playerBaseId)
         {
             pursuing = false;
             GameEvents.GangReachedBase(gangData.gangName);
         }
+    }
+
+    private void PlayMoveTrail(MapNode fromNode, MapNode toNode)
+    {
+        Color color = GetGangColor(gangData.type);
+        Transform parent = GraphMapSetup.Instance != null ? GraphMapSetup.Instance.TrailContainer : transform;
+
+        Vector3 from3 = new Vector3(fromNode.position.x, fromNode.position.y, -0.05f);
+        Vector3 to3 = new Vector3(toNode.position.x, toNode.position.y, -0.05f);
+
+        LineRenderer trail = MapVisualFactory.CreateEdgeLine(
+            $"Trail_{gangData.gangName}_{fromNode.id}-{toNode.id}", parent, from3, from3, 0.08f, color);
+
+        FlashNode(fromNode.id, color);
+
+        float progress = 0f;
+        DOTween.To(() => progress, x => progress = x, 1f, moveDuration)
+            .OnUpdate(() => trail.SetPosition(1, Vector3.Lerp(from3, to3, progress)))
+            .OnComplete(() => FlashNode(toNode.id, color));
+    }
+
+    private static void FlashNode(string nodeId, Color color)
+    {
+        if (GraphMapSetup.Instance == null || !GraphMapSetup.Instance.NodeRenderers.TryGetValue(nodeId, out Renderer renderer))
+            return;
+
+        renderer.material.DOKill();
+        renderer.material.DOColor(color, 0.2f);
     }
 }
