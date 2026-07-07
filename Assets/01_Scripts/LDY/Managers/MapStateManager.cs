@@ -55,6 +55,8 @@ public class MapStateManager : MonoBehaviour
     public void BlockEdge(string a, string b, int currentTurn, int durationTurns)
     {
         blockedEdges.Add(new BlockedEdge { nodeA = a, nodeB = b, expireTurn = currentTurn + durationTurns });
+        if (GraphMapSetup.Instance != null)
+            GraphMapSetup.Instance.SetWallVisual(a, b, true);
         Debug.Log($"[MapState] 간선 차단: {a} - {b} (턴 {currentTurn + durationTurns}까지)");
     }
 
@@ -73,6 +75,29 @@ public class MapStateManager : MonoBehaviour
         Debug.Log($"[MapState] 임시 길 생성: {a} - {b} (턴 {currentTurn + durationTurns}까지)");
     }
 
+    // 게임 리스타트: 걸려있던 벽/임시 길을 전부 걷어내고, 임시 길로 추가됐던 connectedNodeIds도 되돌린다.
+    public void ResetState()
+    {
+        foreach (BlockedEdge edge in blockedEdges)
+        {
+            if (GraphMapSetup.Instance != null)
+                GraphMapSetup.Instance.SetWallVisual(edge.nodeA, edge.nodeB, false);
+        }
+        blockedEdges.Clear();
+
+        if (nodes != null)
+        {
+            foreach (TemporaryEdge edge in temporaryEdges)
+            {
+                if (nodes.TryGetValue(edge.nodeA, out MapNode nodeA))
+                    nodeA.connectedNodeIds.Remove(edge.nodeB);
+                if (nodes.TryGetValue(edge.nodeB, out MapNode nodeB))
+                    nodeB.connectedNodeIds.Remove(edge.nodeA);
+            }
+        }
+        temporaryEdges.Clear();
+    }
+
     public bool IsEdgeBlocked(string a, string b)
     {
         foreach (BlockedEdge edge in blockedEdges)
@@ -89,7 +114,11 @@ public class MapStateManager : MonoBehaviour
         {
             bool expired = edge.expireTurn <= currentTurn;
             if (expired)
+            {
+                if (GraphMapSetup.Instance != null)
+                    GraphMapSetup.Instance.SetWallVisual(edge.nodeA, edge.nodeB, false);
                 Debug.Log($"[MapState] 벽 해제: {edge.nodeA} - {edge.nodeB}");
+            }
             return expired;
         });
 

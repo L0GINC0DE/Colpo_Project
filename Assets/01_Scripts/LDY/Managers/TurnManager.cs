@@ -73,12 +73,33 @@ public class TurnManager : MonoBehaviour
     private void HandleGangReachedBase(string gangId)
     {
         isGameOver = true;
-        Debug.LogError($"[배드엔딩] 갱단 '{gangId}'가 플레이어 기지에 도달했습니다! (턴 {currentTurn})");
+        Debug.LogError($"[배드엔딩] 갱단 '{gangId}'가 플레이어 기지에 도달했습니다! (턴 {currentTurn}) - 재시도하려면 리스타트하세요.");
     }
 
     private void HandleAllGangsDefeated()
     {
         isGameOver = true;
         Debug.Log("[해피엔딩] 모든 갱단이 자금을 소진했습니다!");
+    }
+
+    // 게임 리스타트: 턴/갱단/맵 상태/벽 아이템 개수를 전부 시작 시점으로 되돌린다.
+    public void ResetGame()
+    {
+        currentTurn = 0;
+        isGameOver = false;
+
+        foreach (GangController controller in GangManager.Instance.GetAllGangControllers())
+            controller.ResetToStart();
+
+        MapStateManager.Instance.ResetState();
+        GraphMapSetup.Instance.ResetVisuals();
+
+        if (WallItemHandler.Instance != null)
+            WallItemHandler.Instance.ResetCharges();
+
+        if (FreezeItemHandler.Instance != null)
+            FreezeItemHandler.Instance.ResetCharges();
+
+        Debug.Log("[TurnManager] 게임 리스타트 - 모든 상태를 초기화했습니다.");
     }
 }

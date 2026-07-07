@@ -22,11 +22,13 @@ public class GangManager : MonoBehaviour
     private void OnEnable()
     {
         GameEvents.OnColpoResult += HandleColpoResult;
+        GameEvents.OnSkillUsed += HandleSkillUsed;
     }
 
     private void OnDisable()
     {
         GameEvents.OnColpoResult -= HandleColpoResult;
+        GameEvents.OnSkillUsed -= HandleSkillUsed;
     }
 
     public GangData GetGangInfo(string gangId)
@@ -73,7 +75,26 @@ public class GangManager : MonoBehaviour
         }
     }
 
+    public void Freeze(string gangId, int turns)
+    {
+        GangController controller = FindController(gangId);
+        if (controller == null)
+        {
+            Debug.LogWarning($"[GangManager] 존재하지 않는 갱단id: {gangId}");
+            return;
+        }
+
+        controller.Freeze(turns);
+    }
+
     // ----- 내부 구현 -----
+
+    // 스킬명 -> 갱단 대상 효과 매핑. 간선 대상 스킬(길목틀어막기/길만들기)은 MapStateManager가 처리한다.
+    private void HandleSkillUsed(string skillName, string targetId, int durationTurns)
+    {
+        if (skillName == "얼리기")
+            Freeze(targetId, durationTurns);
+    }
 
     private void HandleColpoResult(string gangId, int amount, string resultType)
     {

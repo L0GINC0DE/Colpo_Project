@@ -62,6 +62,12 @@ public class TestDriver : MonoBehaviour
             Debug.Log($"[TestDriver] N - CreateEdge({newEdgeNodeA}, {newEdgeNodeB}, {newEdgeDuration}턴)");
             MapStateManager.Instance.CreateEdge(newEdgeNodeA, newEdgeNodeB, TurnManager.Instance.currentTurn, newEdgeDuration);
         }
+
+        if (keyboard.rKey.wasPressedThisFrame)
+        {
+            Debug.Log("[TestDriver] R - ResetGame (재시도)");
+            TurnManager.Instance.ResetGame();
+        }
     }
 
     private void HandleGangDefeated(string gangId) => Debug.Log($"[TestDriver] 이벤트 - 갱단 와해: {gangId}");
