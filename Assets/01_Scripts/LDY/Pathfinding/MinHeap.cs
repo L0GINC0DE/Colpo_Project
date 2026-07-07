@@ -1,10 +1,6 @@
 using System;
 using System.Collections.Generic;
 
-// [내부 구현] 최소 힙(Min-Heap).
-// 배열(List) 기반의 완전 이진트리로, 우선순위(priority)가 가장 작은 항목을 O(log n)에 꺼낼 수 있다.
-// 부모 인덱스 i의 자식은 2i+1(왼쪽) / 2i+2(오른쪽)에 위치하고,
-// 반대로 자식 인덱스 i의 부모는 (i-1)/2 에 위치한다 (정수 나눗셈으로 내림 처리됨).
 public class MinHeap<T>
 {
     private readonly List<(T item, float priority)> heap = new List<(T item, float priority)>();
@@ -30,7 +26,6 @@ public class MinHeap<T>
         }
     }
 
-    // 루트(가장 작은 값)를 꺼내 반환한다.
     // 이후 마지막 항목을 루트 자리로 옮기고, 자식 중 더 작은 쪽과 계속 자리를 바꾸며
     // 아래로 내려보낸다 (sift-down). 이렇게 하면 트리 전체를 다시 정렬하지 않아도
     // 힙 조건(부모 <= 자식)이 유지된다.
