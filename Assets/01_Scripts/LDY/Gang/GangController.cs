@@ -9,6 +9,11 @@ public class GangController : MonoBehaviour
     public bool pursuing;
     public string playerBaseId = "base";
 
+    // 리스타트 시 되돌아갈 시작 노드. GangData.currentNodeId는 플레이 중 계속 바뀌는 값이라
+    // (게다가 도메인 리로드/이전 Play 세션을 거치며 되돌아가지 않는 경우가 있어서) 리셋 기준으로 못 쓴다.
+    // 인스펙터에 비워두면 Start() 시점의 gangData.currentNodeId로 자동 채워진다.
+    [SerializeField] private string spawnNodeId;
+
     [SerializeField] private float moveDuration = 0.4f;
 
     // 직진파(Direct) 전용 캐시.
@@ -17,8 +22,6 @@ public class GangController : MonoBehaviour
     private List<string> cachedPath;
     private int cachedPathIndex;
 
-    // 리스타트 시 되돌아갈 초기 상태. 실제 플레이가 시작되기 전(Start 시점)의 값을 캐싱해둔다.
-    private string initialNodeId;
     private float initialDamageResistance;
 
     // 얼리기 스킬: 남은 정지 턴 수. 0보다 크면 ProcessTurn에서 이동을 건너뛴다.
@@ -28,10 +31,12 @@ public class GangController : MonoBehaviour
 
     private void Start()
     {
-        initialNodeId = gangData.currentNodeId;
+        if (string.IsNullOrEmpty(spawnNodeId))
+            spawnNodeId = gangData.currentNodeId;
+
         initialDamageResistance = gangData.damageResistance;
 
-        if (GraphMapSetup.Instance != null && GraphMapSetup.Instance.Nodes.TryGetValue(gangData.currentNodeId, out MapNode node))
+        if (GraphMapSetup.Instance != null && GraphMapSetup.Instance.Nodes.TryGetValue(spawnNodeId, out MapNode node))
             transform.position = node.position;
 
         MapVisualFactory.CreateMarker($"GangVisual_{gangData.gangName}", transform, transform.position, 0.7f, GetGangColor(gangData.type), keepCollider: true);
@@ -89,7 +94,7 @@ public class GangController : MonoBehaviour
         transform.DOKill();
         DOTween.Kill(this);
 
-        gangData.currentNodeId = initialNodeId;
+        gangData.currentNodeId = spawnNodeId;
         gangData.currentFunds = gangData.maxFunds;
         gangData.damageResistance = initialDamageResistance;
         pursuing = false;
@@ -99,7 +104,7 @@ public class GangController : MonoBehaviour
         frozenTurnsRemaining = 0;
         SetIceOverlayActive(false);
 
-        if (GraphMapSetup.Instance != null && GraphMapSetup.Instance.Nodes.TryGetValue(initialNodeId, out MapNode node))
+        if (GraphMapSetup.Instance != null && GraphMapSetup.Instance.Nodes.TryGetValue(spawnNodeId, out MapNode node))
             transform.position = node.position;
     }
 
