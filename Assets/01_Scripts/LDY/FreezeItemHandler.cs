@@ -1,9 +1,8 @@
 using UnityEngine;
 using UnityEngine.InputSystem;
 
-// [테스트/플레이어 조작] 얼리기 아이템. F로 조준 모드를 켜면(커서가 얼음 모양으로 바뀜)
-// 다음 좌클릭에 맞은 갱단을 freezeDuration턴 얼린다. 조준 중엔 AtmClickHandler(훔치기)를
-// 잠깐 꺼서, 같은 좌클릭에 훔치기와 얼리기가 동시에 발동하지 않게 한다.
+// 얼리기 아이템. F로 조준 모드를 켜면(커서가 얼음 모양으로 바뀜)
+// 다음 좌클릭에 맞은 갱단을 freezeDuration턴 얼린다.
 [RequireComponent(typeof(Camera))]
 public class FreezeItemHandler : MonoBehaviour
 {
@@ -76,6 +75,9 @@ public class FreezeItemHandler : MonoBehaviour
             return;
         }
 
+        if (WallItemHandler.Instance != null)
+            WallItemHandler.Instance.Disarm();
+
         armed = true;
         if (atmClickHandler != null)
             atmClickHandler.enabled = false;
@@ -84,7 +86,8 @@ public class FreezeItemHandler : MonoBehaviour
         Debug.Log("[FreezeItemHandler] 얼리기 조준 모드 - 갱단을 좌클릭하세요 (다시 F를 누르면 취소)");
     }
 
-    private void Disarm()
+    // 다른 아이템(B: 벽)이 조준 모드를 켤 때 이쪽을 취소시킬 수 있도록 공개해둔다.
+    public void Disarm()
     {
         if (!armed)
             return;
