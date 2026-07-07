@@ -52,4 +52,27 @@ public static class MapVisualFactory
 
         return line;
     }
+
+    // nodeAId/nodeBId를 넘기면 클릭 가능한 콜라이더(+EdgeMarker)도 같이 만들어준다.
+    // 벽 아이템처럼 "이 길을 클릭해서 고른다"가 필요한 경우에만 사용.
+    public static LineRenderer CreateClickableEdgeLine(string name, Transform parent, Vector3 worldA, Vector3 worldB, float width, Color color, string nodeAId, string nodeBId)
+    {
+        LineRenderer line = CreateEdgeLine(name, parent, worldA, worldB, width, color);
+
+        var colliderGo = new GameObject($"{name}_Collider");
+        colliderGo.transform.SetParent(parent, false);
+
+        Vector3 diff = worldB - worldA;
+        colliderGo.transform.position = (worldA + worldB) * 0.5f;
+        colliderGo.transform.rotation = Quaternion.Euler(0f, 0f, Mathf.Atan2(diff.y, diff.x) * Mathf.Rad2Deg);
+
+        BoxCollider box = colliderGo.AddComponent<BoxCollider>();
+        box.size = new Vector3(diff.magnitude, Mathf.Max(width * 4f, 0.3f), 0.3f);
+
+        EdgeMarker marker = colliderGo.AddComponent<EdgeMarker>();
+        marker.nodeAId = nodeAId;
+        marker.nodeBId = nodeBId;
+
+        return line;
+    }
 }

@@ -151,6 +151,7 @@ MonoBehaviour:
   gangData: {fileID: 11400000, guid: 431b99ea9c9e7d74eb16158cab84710e, type: 2}
   pursuing: 0
   playerBaseId: base
+  spawnNodeId: gC
   moveDuration: 0.4
 --- !u!4 &153648055
 Transform:
@@ -245,6 +246,7 @@ MonoBehaviour:
   gangData: {fileID: 11400000, guid: 0342a2f62c5f3da4694392f3f2db5e32, type: 2}
   pursuing: 0
   playerBaseId: base
+  spawnNodeId: gB
   moveDuration: 0.4
 --- !u!4 &481269462
 Transform:
@@ -275,6 +277,8 @@ GameObject:
   - component: {fileID: 692769359}
   - component: {fileID: 692769363}
   - component: {fileID: 692769364}
+  - component: {fileID: 692769365}
+  - component: {fileID: 692769366}
   m_Layer: 0
   m_Name: Camera
   m_TagString: Untagged
@@ -430,6 +434,34 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::AtmClickHandler
   stealAmount: 0
+--- !u!114 &692769365
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 692769358}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 004017ede4444386befe06b68c4ecc3c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::WallItemHandler
+  wallCharges: 3
+  wallDurationTurns: 3
+--- !u!114 &692769366
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 692769358}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b7ed39bcadf4f4c4c9ff527a388342d2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::FreezeItemHandler
+  freezeCharges: 3
+  freezeDuration: 1
 --- !u!1 &901191724
 GameObject:
   m_ObjectHideFlags: 0
@@ -506,6 +538,7 @@ MonoBehaviour:
   gangData: {fileID: 11400000, guid: 82f74af5df847704f86bdedc13ccea24, type: 2}
   pursuing: 0
   playerBaseId: base
+  spawnNodeId: gD
   moveDuration: 0.4
 --- !u!4 &1647697627
 Transform:
@@ -659,6 +692,7 @@ MonoBehaviour:
   gangData: {fileID: 11400000, guid: 7f11f0be007ac874d8585fbcd6bf94ce, type: 2}
   pursuing: 0
   playerBaseId: base
+  spawnNodeId: gA
   moveDuration: 0.4
 --- !u!4 &1724091212
 Transform:

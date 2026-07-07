@@ -17,5 +17,5 @@ MonoBehaviour:
   riskLevel: 0
   maxFunds: 1000
   currentFunds: 1000
-  currentNodeId: gD
-  damageResistance: 0.05
+  currentNodeId: base
+  damageResistance: 0.5

@@ -1,0 +1,125 @@
+using UnityEngine;
+using UnityEngine.InputSystem;
+
+// [테스트/플레이어 조작] 얼리기 아이템. F로 조준 모드를 켜면(커서가 얼음 모양으로 바뀜)
+// 다음 좌클릭에 맞은 갱단을 freezeDuration턴 얼린다. 조준 중엔 AtmClickHandler(훔치기)를
+// 잠깐 꺼서, 같은 좌클릭에 훔치기와 얼리기가 동시에 발동하지 않게 한다.
+[RequireComponent(typeof(Camera))]
+public class FreezeItemHandler : MonoBehaviour
+{
+    public static FreezeItemHandler Instance { get; private set; }
+
+    [SerializeField] private int freezeCharges = 3;
+    [SerializeField] private int freezeDuration = 1;
+
+    private int initialFreezeCharges;
+    private Camera cam;
+    private AtmClickHandler atmClickHandler;
+    private Texture2D cursorTexture;
+    private bool armed;
+
+    private void Awake()
+    {
+        Instance = this;
+        cam = GetComponent<Camera>();
+        atmClickHandler = GetComponent<AtmClickHandler>();
+        initialFreezeCharges = freezeCharges;
+        cursorTexture = BuildCursorTexture();
+    }
+
+    // 게임 리스타트: 개수를 되돌리고 조준 모드도 취소한다.
+    public void ResetCharges()
+    {
+        freezeCharges = initialFreezeCharges;
+        Disarm();
+    }
+
+    private void Update()
+    {
+        Keyboard keyboard = Keyboard.current;
+        if (keyboard != null && keyboard.fKey.wasPressedThisFrame)
+            ToggleArmed();
+
+        if (!armed)
+            return;
+
+        Mouse mouse = Mouse.current;
+        if (mouse == null || !mouse.leftButton.wasPressedThisFrame)
+            return;
+
+        Ray ray = cam.ScreenPointToRay(mouse.position.ReadValue());
+        if (Physics.Raycast(ray, out RaycastHit hit))
+        {
+            GangController controller = hit.collider.GetComponentInParent<GangController>();
+            if (controller != null && controller.gangData != null)
+            {
+                GangManager.Instance.Freeze(controller.gangData.gangName, freezeDuration);
+                freezeCharges--;
+                Debug.Log($"[FreezeItemHandler] {controller.gangData.gangName} 얼림 ({freezeDuration}턴, 남은 개수: {freezeCharges})");
+            }
+        }
+
+        Disarm();
+    }
+
+    private void ToggleArmed()
+    {
+        if (armed)
+        {
+            Disarm();
+            return;
+        }
+
+        if (freezeCharges <= 0)
+        {
+            Debug.Log("[FreezeItemHandler] 얼리기 개수를 다 썼습니다.");
+            return;
+        }
+
+        armed = true;
+        if (atmClickHandler != null)
+            atmClickHandler.enabled = false;
+
+        Cursor.SetCursor(cursorTexture, new Vector2(cursorTexture.width, cursorTexture.height) * 0.5f, CursorMode.Auto);
+        Debug.Log("[FreezeItemHandler] 얼리기 조준 모드 - 갱단을 좌클릭하세요 (다시 F를 누르면 취소)");
+    }
+
+    private void Disarm()
+    {
+        if (!armed)
+            return;
+
+        armed = false;
+        if (atmClickHandler != null)
+            atmClickHandler.enabled = true;
+
+        Cursor.SetCursor(null, Vector2.zero, CursorMode.Auto);
+    }
+
+    // 별도 아트 없이 코드로 만드는 임시 커서(십자 모양). 나중에 실제 아이콘으로 교체 예정.
+    private static Texture2D BuildCursorTexture()
+    {
+        const int size = 32;
+        var texture = new Texture2D(size, size, TextureFormat.RGBA32, false);
+        Color clear = new Color(0f, 0f, 0f, 0f);
+        Color ice = new Color(0.4f, 0.8f, 1f, 1f);
+
+        for (int y = 0; y < size; y++)
+        {
+            for (int x = 0; x < size; x++)
+                texture.SetPixel(x, y, clear);
+        }
+
+        int center = size / 2;
+        for (int i = 0; i < size; i++)
+        {
+            texture.SetPixel(i, center, ice);
+            texture.SetPixel(i, Mathf.Clamp(center - 1, 0, size - 1), ice);
+            texture.SetPixel(center, i, ice);
+            texture.SetPixel(Mathf.Clamp(center - 1, 0, size - 1), i, ice);
+        }
+
+        texture.Apply();
+        return texture;
+    }
+}

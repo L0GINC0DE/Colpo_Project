@@ -17,5 +17,5 @@ MonoBehaviour:
   riskLevel: 0
   maxFunds: 1000
   currentFunds: 1000
-  currentNodeId: gC
+  currentNodeId: base
   damageResistance: 0

@@ -9,6 +9,11 @@ public class GangController : MonoBehaviour
     public bool pursuing;
     public string playerBaseId = "base";
 
+    // 리스타트 시 되돌아갈 시작 노드. GangData.currentNodeId는 플레이 중 계속 바뀌는 값이라
+    // (게다가 도메인 리로드/이전 Play 세션을 거치며 되돌아가지 않는 경우가 있어서) 리셋 기준으로 못 쓴다.
+    // 인스펙터에 비워두면 Start() 시점의 gangData.currentNodeId로 자동 채워진다.
+    [SerializeField] private string spawnNodeId;
+
     [SerializeField] private float moveDuration = 0.4f;
 
     // 직진파(Direct) 전용 캐시.
@@ -17,12 +22,90 @@ public class GangController : MonoBehaviour
     private List<string> cachedPath;
     private int cachedPathIndex;
 
+    private float initialDamageResistance;
+
+    // 얼리기 스킬: 남은 정지 턴 수. 0보다 크면 ProcessTurn에서 이동을 건너뛴다.
+    // 얼면 갱단 마커 위에 반투명 하늘색 얼음 구체를 겹쳐 보여준다 (모양 자체는 안 바뀜).
+    private int frozenTurnsRemaining;
+    private GameObject iceOverlay;
+
     private void Start()
     {
-        if (GraphMapSetup.Instance != null && GraphMapSetup.Instance.Nodes.TryGetValue(gangData.currentNodeId, out MapNode node))
+        if (string.IsNullOrEmpty(spawnNodeId))
+            spawnNodeId = gangData.currentNodeId;
+
+        initialDamageResistance = gangData.damageResistance;
+
+        if (GraphMapSetup.Instance != null && GraphMapSetup.Instance.Nodes.TryGetValue(spawnNodeId, out MapNode node))
             transform.position = node.position;
 
         MapVisualFactory.CreateMarker($"GangVisual_{gangData.gangName}", transform, transform.position, 0.7f, GetGangColor(gangData.type), keepCollider: true);
+    }
+
+    // 얼리기 스킬: turns턴 동안 ProcessTurn에서 이동을 건너뛰게 하고, 얼음 오버레이를 켠다.
+    public void Freeze(int turns)
+    {
+        frozenTurnsRemaining = Mathf.Max(frozenTurnsRemaining, turns);
+        SetIceOverlayActive(true);
+        Debug.Log($"[{gangData.gangName}] 얼음 - {frozenTurnsRemaining}턴 동안 정지");
+    }
+
+    private void SetIceOverlayActive(bool active)
+    {
+        if (active)
+        {
+            if (iceOverlay == null)
+                iceOverlay = CreateIceOverlay();
+            iceOverlay.SetActive(true);
+        }
+        else if (iceOverlay != null)
+        {
+            iceOverlay.SetActive(false);
+        }
+    }
+
+    // 갱단 마커(스케일 0.7)보다 살짝 큰 반투명 하늘색 구체. Sprites/Default는 알파 블렌딩을
+    // 기본 지원해서, URP Unlit처럼 투명 렌더링을 따로 설정할 필요가 없다.
+    private GameObject CreateIceOverlay()
+    {
+        GameObject overlay = GameObject.CreatePrimitive(PrimitiveType.Sphere);
+        overlay.name = $"Ice_{gangData.gangName}";
+        Destroy(overlay.GetComponent<Collider>());
+
+        overlay.transform.SetParent(transform, false);
+        overlay.transform.localPosition = Vector3.zero;
+        overlay.transform.localScale = Vector3.one * 0.9f;
+
+        Renderer renderer = overlay.GetComponent<Renderer>();
+        renderer.material = new Material(Shader.Find("Sprites/Default")) { color = new Color(0.55f, 0.85f, 1f, 0.5f) };
+
+        return overlay;
+    }
+
+    // 게임 리스타트: 자금/위치/추적 상태/캐싱된 경로를 전부 시작 시점으로 되돌리고,
+    // 와해되어 비활성화됐던 오브젝트도 다시 켠다.
+    public void ResetToStart()
+    {
+        gameObject.SetActive(true);
+
+        // 이동 트윈(transform 대상)과 PlayMoveTrail의 트레일 채우기 트윈(SetTarget(this)로 태깅됨)을
+        // 모두 죽여야 한다. 안 그러면 리셋 도중이던 트레일의 OnComplete가 나중에 뒤늦게 실행되면서
+        // 방금 되돌린 노드 색을 다시 갱단 색으로 덮어써버린다.
+        transform.DOKill();
+        DOTween.Kill(this);
+
+        gangData.currentNodeId = spawnNodeId;
+        gangData.currentFunds = gangData.maxFunds;
+        gangData.damageResistance = initialDamageResistance;
+        pursuing = false;
+        cachedPath = null;
+        cachedPathIndex = 0;
+
+        frozenTurnsRemaining = 0;
+        SetIceOverlayActive(false);
+
+        if (GraphMapSetup.Instance != null && GraphMapSetup.Instance.Nodes.TryGetValue(spawnNodeId, out MapNode node))
+            transform.position = node.position;
     }
 
     private void OnEnable()
@@ -70,6 +153,17 @@ public class GangController : MonoBehaviour
 
     public void ProcessTurn(int turnCount, AStarPathfinder pathfinder, Func<string, string, bool> isEdgeBlocked)
     {
+        if (frozenTurnsRemaining > 0)
+        {
+            frozenTurnsRemaining--;
+            Debug.Log($"[{gangData.gangName}] 얼어서 이번 턴 정지 (남은 턴: {frozenTurnsRemaining})");
+
+            if (frozenTurnsRemaining == 0)
+                SetIceOverlayActive(false);
+
+            return;
+        }
+
         switch (gangData.type)
         {
             case GangType.Direct:
@@ -224,6 +318,7 @@ public class GangController : MonoBehaviour
 
         float progress = 0f;
         DOTween.To(() => progress, x => progress = x, 1f, moveDuration)
+            .SetTarget(this)
             .OnUpdate(() => trail.SetPosition(1, Vector3.Lerp(from3, to3, progress)))
             .OnComplete(() => FlashNode(toNode.id, color));
     }
