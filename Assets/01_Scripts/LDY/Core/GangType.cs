@@ -1,7 +1,4 @@
-// [팀 공유 계층] 갱단 성향(이동 AI 패턴).
-// 이번 구현 대상은 Direct/Greedy/Chaos/Scale/Intelligent 5개이며,
-// Support/Debuff/Tanker는 추후 구현을 위해 enum 값만 미리 정의해둔다.
-// (Tanker는 damageResistance 고정값만 GangController.UpdateResistance에 반영되어 있고, 이동 로직은 없음)
+// 갱단 성향(이동 AI 패턴).
 public enum GangType
 {
     Direct,       // 직진파: 추적 시작 시 A* 한 번만 계산해 캐싱, 막히면 재탐색 없이 대기

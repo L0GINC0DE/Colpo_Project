@@ -1,13 +1,6 @@
 using UnityEngine;
 using UnityEngine.InputSystem;
 
-// [테스트 전용] 팀원 스킬/UI 코드가 아직 없는 상태에서 추적 시스템을 키 입력만으로
-// 검증하기 위한 임시 드라이버. 실제 게임 로직에는 관여하지 않는다.
-//
-//   S     : testGangId 에게서 StealFrom 호출 (추적 시작 확인)
-//   Space : AdvanceTurn 호출 (갱단들이 성향별로 이동하는 로그 확인)
-//   B     : blockNodeA - blockNodeB 간선을 blockDuration턴 동안 BlockEdge
-//   N     : newEdgeNodeA - newEdgeNodeB 사이에 newEdgeDuration턴짜리 CreateEdge
 public class TestDriver : MonoBehaviour
 {
     [Header("S: StealFrom 테스트")]

@@ -1,8 +1,6 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-// [내부 구현] 턴 진행을 총괄하는 싱글톤.
-// 팀원 공용 API: AdvanceTurn(). 현재 턴은 currentTurn 필드로 읽을 수 있다.
 public class TurnManager : MonoBehaviour
 {
     public static TurnManager Instance { get; private set; }

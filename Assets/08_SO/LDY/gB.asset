@@ -15,7 +15,7 @@ MonoBehaviour:
   gangName: Greedy
   type: 1
   riskLevel: 0
-  maxFunds: 100
-  currentFunds: 100
+  maxFunds: 1000
+  currentFunds: 1000
   currentNodeId: gB
   damageResistance: 0

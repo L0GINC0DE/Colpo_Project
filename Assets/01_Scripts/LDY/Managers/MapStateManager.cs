@@ -1,8 +1,6 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-// [내부 구현] 벽(막힌 길)과 임시 길(새로 만든 길)을 관리하는 싱글톤.
-// 팀원 코드에서 직접 호출해도 되는 public API: BlockEdge / CreateEdge / IsEdgeBlocked.
 public class MapStateManager : MonoBehaviour
 {
     public static MapStateManager Instance { get; private set; }
@@ -27,8 +25,6 @@ public class MapStateManager : MonoBehaviour
     private readonly List<BlockedEdge> blockedEdges = new List<BlockedEdge>();
     private readonly List<TemporaryEdge> temporaryEdges = new List<TemporaryEdge>();
 
-    // CreateEdge/RemoveExpired에서 노드의 connectedNodeIds를 직접 수정해야 하므로
-    // GraphMapSetup이 만든 노드 그래프를 주입받는다 (GraphMapSetup.Start 참고).
     private Dictionary<string, MapNode> nodes;
 
     private void Awake()
@@ -77,7 +73,6 @@ public class MapStateManager : MonoBehaviour
         Debug.Log($"[MapState] 임시 길 생성: {a} - {b} (턴 {currentTurn + durationTurns}까지)");
     }
 
-    // 양방향 체크: a-b든 b-a든 같은 간선으로 취급한다.
     public bool IsEdgeBlocked(string a, string b)
     {
         foreach (BlockedEdge edge in blockedEdges)
