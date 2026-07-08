@@ -20,5 +20,6 @@ MonoBehaviour:
   currentFunds: 1000
   currentNodeId: base
   damageResistance: 0.5
+  resistanceGainPerTenTurns: 0.5
   hackLockedUntilTurn: 0
   maxChaseDistanceByRisk: 3

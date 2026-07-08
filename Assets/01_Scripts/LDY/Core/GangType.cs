@@ -5,7 +5,7 @@ public enum GangType
     Chaos,        // 불예측파: 40% 확률로 인접 노드 중 무작위 이동
     Scale,        // 왕귀파: 턴이 지날수록 빨라지고 둔감해짐
     Intelligent,  // 지능파: 매 턴 재탐색해서 막힌 길을 자동 우회
-    Support,      // 보급파 (미구현)
-    Debuff,       // 디버프파 (미구현)
-    Tanker        // 탱커파 (미구현, 둔감도 고정값만 반영)
+    Support,      // 보급파 
+    Debuff,       // 디버프파 
+    Tanker        // 탱커파 
 }

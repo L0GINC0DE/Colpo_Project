@@ -10,7 +10,7 @@ public class GangData : ScriptableObject
 
     // 평상시 위험도. 실제 조회는 GetEffectiveRiskLevel()을 거칠 것 - 직접 읽으면
     // 시너지로 인한 위험도 상승이 반영 안 된다.
-    [FormerlySerializedAs("riskLevel")]
+    [FormerlySerializedAs("riskLevel")] 
     public RiskLevel baseRiskLevel;
 
     // 위험도가 시너지랑 무관하게 고정인 갱단이면 체크.
@@ -26,6 +26,9 @@ public class GangData : ScriptableObject
     [Header("전투 특성")]
     [Range(0f, 1f)]
     public float damageResistance;
+
+    // 왕귀파(Scale) 전용: 10턴마다 이만큼씩 피해 저항이 증가한다(GangController.UpdateResistance에서 사용).
+    public float resistanceGainPerTenTurns = 0.5f;
 
     [Header("Colpo 결과 상태")]
     // 해킹 실패 시 이 턴까지 해킹 막힘 (ProcessTurn에서 체크).

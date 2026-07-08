@@ -65,10 +65,8 @@ public class GangController : MonoBehaviour
         Debug.Log($"[{gangData.gangName}] 얼음 - {frozenTurnsRemaining}턴 동안 정지");
     }
 
-    // 0.4초는 너무 빨라서 잘 안 보였다.
     private const float IceSizeAnimDuration = 1.2f;
 
-    // _size 목표값. 모양/색/텍스처는 프리팹·머티리얼 쪽 몫이고 여긴 크기만 건드린다.
     private const float IceMaxSize = 2f;
 
     private void SetIceOverlayActive(bool active)
@@ -339,7 +337,8 @@ public class GangController : MonoBehaviour
         switch (gangData.type)
         {
             case GangType.Scale:
-                gangData.damageResistance = Mathf.Min(0.8f, turnCount * 0.05f);
+                // 10턴마다 한 단계씩 오름(연속 상승 아님). 증가폭은 SO에서 갱단별로 조정 가능.
+                gangData.damageResistance = Mathf.Min(0.8f, (turnCount / 10) * gangData.resistanceGainPerTenTurns);
                 break;
 
             case GangType.Tanker:
