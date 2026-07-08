@@ -11,13 +11,25 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="2aef30f8-3169-45b4-af34-d924f3282f78" name="변경" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/.idea.Colpo_Project/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.Colpo_Project/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/00_Scenes/LDY_AStar.unity" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/00_Scenes/LDY_AStar.unity.meta" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.claude/settings.json" beforeDir="false" afterPath="$PROJECT_DIR$/.claude/settings.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/00_Scenes/LDY/LDY_AStar.unity" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/00_Scenes/LDY/LDY_AStar.unity" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/01_Scripts/LDY/AtmClickHandler.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/01_Scripts/LDY/AtmClickHandler.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/01_Scripts/LDY/Core/GameEvents.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/01_Scripts/LDY/Core/GameEvents.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/01_Scripts/LDY/Core/GangData.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/01_Scripts/LDY/Core/GangData.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/01_Scripts/LDY/Core/GangType.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/01_Scripts/LDY/Core/GangType.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/01_Scripts/LDY/FreezeItemHandler.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/01_Scripts/LDY/FreezeItemHandler.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Assets/01_Scripts/LDY/Gang/GangController.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/01_Scripts/LDY/Gang/GangController.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Assets/01_Scripts/LDY/Gang/GraphMapSetup.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/01_Scripts/LDY/Gang/GraphMapSetup.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/01_Scripts/LDY/Gang/MapVisualFactory.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/01_Scripts/LDY/Gang/MapVisualFactory.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/01_Scripts/LDY/Managers/MapStateManager.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/01_Scripts/LDY/Managers/MapStateManager.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/01_Scripts/LDY/Managers/GangManager.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/01_Scripts/LDY/Managers/GangManager.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/01_Scripts/LDY/Managers/TurnManager.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/01_Scripts/LDY/Managers/TurnManager.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/01_Scripts/LDY/WallItemHandler.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/01_Scripts/LDY/WallItemHandler.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/06_Effects/LDY/Froze.shadergraph" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/06_Effects/LDY/Froze.shadergraph" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/06_Effects/LDY/FrozeMaterial.mat" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/06_Effects/LDY/FrozeMaterial.mat" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/08_SO/LDY/gA.asset" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/08_SO/LDY/gA.asset" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/08_SO/LDY/gB.asset" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/08_SO/LDY/gB.asset" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/08_SO/LDY/gC.asset" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/08_SO/LDY/gC.asset" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/08_SO/LDY/gD.asset" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/08_SO/LDY/gD.asset" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Settings/PC_Renderer.asset" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Settings/PC_Renderer.asset" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -102,6 +114,7 @@
       <option name="presentableId" value="Default" />
       <updated>1783424358079</updated>
       <workItem from="1783424358080" duration="4700000" />
+      <workItem from="1783507416232" duration="322000" />
     </task>
     <servers />
   </component>

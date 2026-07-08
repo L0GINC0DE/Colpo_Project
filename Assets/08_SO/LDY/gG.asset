@@ -10,15 +10,15 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: c26142d4f2bcf79408e5ab320e96543f, type: 3}
-  m_Name: gD
+  m_Name: gG
   m_EditorClassIdentifier: Assembly-CSharp::GangData
-  gangName: Scale
-  type: 3
-  riskLevel: 0
+  gangName: Tanker
+  type: 7
+  riskLevel: 2
   isRiskFixed: 0
   maxFunds: 1000
   currentFunds: 1000
-  currentNodeId: base
-  damageResistance: 0.5
+  currentNodeId: gG
+  damageResistance: 0.3
   hackLockedUntilTurn: 0
-  maxChaseDistanceByRisk: 3
+  maxChaseDistanceByRisk: 8

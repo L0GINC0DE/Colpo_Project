@@ -11,6 +11,16 @@ public class FreezeItemHandler : MonoBehaviour
     [SerializeField] private int freezeCharges = 3;
     [SerializeField] private int freezeDuration = 1;
 
+    // 얼음 오버레이에 쓸 머티리얼(icePrefab이 비어있을 때만 사용). 이것도 비워두면
+    // GangController가 기본 흰색 Quad로 대신한다.
+    [SerializeField] private Material iceMaterial;
+    public Material IceMaterial => iceMaterial;
+
+    // 직접 만든 얼음 프리팹. 지정돼 있으면 iceMaterial보다 우선해서 그대로 Instantiate하고,
+    // 코드에선 그 프리팹 머티리얼의 _size만 애니메이션한다.
+    [SerializeField] private GameObject icePrefab;
+    public GameObject IcePrefab => icePrefab;
+
     private int initialFreezeCharges;
     private Camera cam;
     private AtmClickHandler atmClickHandler;
@@ -77,6 +87,10 @@ public class FreezeItemHandler : MonoBehaviour
 
         if (WallItemHandler.Instance != null)
             WallItemHandler.Instance.Disarm();
+        if (PathRedirectHandler.Instance != null)
+            PathRedirectHandler.Instance.Disarm();
+        if (NoiseItemHandler.Instance != null)
+            NoiseItemHandler.Instance.Disarm();
 
         armed = true;
         if (atmClickHandler != null)

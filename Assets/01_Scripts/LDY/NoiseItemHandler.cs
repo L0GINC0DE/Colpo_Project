@@ -1,18 +1,17 @@
 using UnityEngine;
 using UnityEngine.InputSystem;
 
-// [테스트/플레이어 조작] 벽 아이템. B로 조준 모드를 켜면(커서가 벽돌 모양으로 바뀜)
-// 다음 좌클릭에 찍은 간선(EdgeMarker 콜라이더)을 wallDurationTurns턴 동안 막는다.
-// 조준 중엔 AtmClickHandler(훔치기)를 잠깐 꺼서 같은 좌클릭에 훔치기가 같이 발동하지 않게 한다.
+// 노이즈 아이템. Z로 조준 모드를 켜면(커서가 회색 지그재그 모양으로 바뀜) 다음 좌클릭에
+// 맞은 갱단의 시너지/부조화 상성 효과를 noiseDuration턴 동안 무효화한다.
 [RequireComponent(typeof(Camera))]
-public class WallItemHandler : MonoBehaviour
+public class NoiseItemHandler : MonoBehaviour
 {
-    public static WallItemHandler Instance { get; private set; }
+    public static NoiseItemHandler Instance { get; private set; }
 
-    [SerializeField] private int wallCharges = 3;
-    [SerializeField] private int wallDurationTurns = 3;
+    [SerializeField] private int noiseCharges = 3;
+    [SerializeField] private int noiseDuration = 2;
 
-    private int initialWallCharges;
+    private int initialNoiseCharges;
     private Camera cam;
     private AtmClickHandler atmClickHandler;
     private Texture2D cursorTexture;
@@ -23,21 +22,21 @@ public class WallItemHandler : MonoBehaviour
         Instance = this;
         cam = GetComponent<Camera>();
         atmClickHandler = GetComponent<AtmClickHandler>();
-        initialWallCharges = wallCharges;
+        initialNoiseCharges = noiseCharges;
         cursorTexture = BuildCursorTexture();
     }
 
     // 게임 리스타트: 개수를 되돌리고 조준 모드도 취소한다.
     public void ResetCharges()
     {
-        wallCharges = initialWallCharges;
+        noiseCharges = initialNoiseCharges;
         Disarm();
     }
 
     private void Update()
     {
         Keyboard keyboard = Keyboard.current;
-        if (keyboard != null && keyboard.bKey.wasPressedThisFrame)
+        if (keyboard != null && keyboard.zKey.wasPressedThisFrame)
             ToggleArmed();
 
         if (!armed)
@@ -50,14 +49,12 @@ public class WallItemHandler : MonoBehaviour
         Ray ray = cam.ScreenPointToRay(mouse.position.ReadValue());
         if (Physics.Raycast(ray, out RaycastHit hit))
         {
-            EdgeMarker edge = hit.collider.GetComponent<EdgeMarker>();
-            if (edge != null)
+            GangController controller = hit.collider.GetComponentInParent<GangController>();
+            if (controller != null && controller.gangData != null)
             {
-                int currentTurn = TurnManager.Instance != null ? TurnManager.Instance.currentTurn : 0;
-                MapStateManager.Instance.BlockEdge(edge.nodeAId, edge.nodeBId, currentTurn, wallDurationTurns);
-
-                wallCharges--;
-                Debug.Log($"[WallItemHandler] {edge.nodeAId}-{edge.nodeBId} 벽 설치 ({wallDurationTurns}턴, 남은 개수: {wallCharges})");
+                GangManager.Instance.Noise(controller.gangData.gangName, noiseDuration);
+                noiseCharges--;
+                Debug.Log($"[NoiseItemHandler] {controller.gangData.gangName} 노이즈 ({noiseDuration}턴, 남은 개수: {noiseCharges})");
             }
         }
 
@@ -72,28 +69,28 @@ public class WallItemHandler : MonoBehaviour
             return;
         }
 
-        if (wallCharges <= 0)
+        if (noiseCharges <= 0)
         {
-            Debug.Log("[WallItemHandler] 벽 개수를 다 썼습니다.");
+            Debug.Log("[NoiseItemHandler] 노이즈 개수를 다 썼습니다.");
             return;
         }
 
         if (FreezeItemHandler.Instance != null)
             FreezeItemHandler.Instance.Disarm();
+        if (WallItemHandler.Instance != null)
+            WallItemHandler.Instance.Disarm();
         if (PathRedirectHandler.Instance != null)
             PathRedirectHandler.Instance.Disarm();
-        if (NoiseItemHandler.Instance != null)
-            NoiseItemHandler.Instance.Disarm();
 
         armed = true;
         if (atmClickHandler != null)
             atmClickHandler.enabled = false;
 
         Cursor.SetCursor(cursorTexture, new Vector2(cursorTexture.width, cursorTexture.height) * 0.5f, CursorMode.Auto);
-        Debug.Log("[WallItemHandler] 벽 조준 모드 - 막을 간선을 좌클릭하세요 (다시 B를 누르면 취소)");
+        Debug.Log("[NoiseItemHandler] 노이즈 조준 모드 - 갱단을 좌클릭하세요 (다시 Z를 누르면 취소)");
     }
 
-    // 다른 아이템(F: 얼리기)이 조준 모드를 켤 때 이쪽을 취소시킬 수 있도록 공개해둔다.
+    // 다른 아이템(F/B/P)이 조준 모드를 켤 때 이쪽을 취소시킬 수 있도록 공개해둔다.
     public void Disarm()
     {
         if (!armed)
@@ -106,13 +103,13 @@ public class WallItemHandler : MonoBehaviour
         Cursor.SetCursor(null, Vector2.zero, CursorMode.Auto);
     }
 
-    // 별도 아트 없이 코드로 만드는 임시 커서(벽돌 느낌의 사각 테두리). 나중에 실제 아이콘으로 교체 예정.
+    // 별도 아트 없이 코드로 만드는 임시 커서(회색 지그재그 - 잡음 느낌). 나중에 실제 아이콘으로 교체 예정.
     private static Texture2D BuildCursorTexture()
     {
         const int size = 32;
         var texture = new Texture2D(size, size, TextureFormat.RGBA32, false);
         Color clear = new Color(0f, 0f, 0f, 0f);
-        Color brick = new Color(0.5f, 0.35f, 0.2f, 1f);
+        Color gray = new Color(0.6f, 0.6f, 0.6f, 1f);
 
         for (int y = 0; y < size; y++)
         {
@@ -120,16 +117,12 @@ public class WallItemHandler : MonoBehaviour
                 texture.SetPixel(x, y, clear);
         }
 
-        const int border = 3;
-        for (int i = 0; i < size; i++)
+        int mid = size / 2;
+        for (int x = 0; x < size; x++)
         {
-            for (int t = 0; t < border; t++)
-            {
-                texture.SetPixel(i, t, brick);
-                texture.SetPixel(i, size - 1 - t, brick);
-                texture.SetPixel(t, i, brick);
-                texture.SetPixel(size - 1 - t, i, brick);
-            }
+            int y = (x / 4) % 2 == 0 ? mid - 4 : mid + 4;
+            texture.SetPixel(x, y, gray);
+            texture.SetPixel(x, Mathf.Clamp(y + 1, 0, size - 1), gray);
         }
 
         texture.Apply();

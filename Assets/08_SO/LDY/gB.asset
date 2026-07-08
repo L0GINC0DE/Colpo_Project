@@ -15,7 +15,10 @@ MonoBehaviour:
   gangName: Greedy
   type: 1
   riskLevel: 0
+  isRiskFixed: 0
   maxFunds: 1000
   currentFunds: 1000
   currentNodeId: base
   damageResistance: 0
+  hackLockedUntilTurn: 0
+  maxChaseDistanceByRisk: 3

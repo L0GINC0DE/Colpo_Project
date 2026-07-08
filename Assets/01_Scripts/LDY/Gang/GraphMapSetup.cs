@@ -65,8 +65,10 @@ public class GraphMapSetup : MonoBehaviour
         foreach (MapNode node in nodes)
         {
             Color color = node.isPlayerBase ? Color.cyan : Color.white;
-            GameObject marker = MapVisualFactory.CreateMarker($"Node_{node.id}", container, node.position, 0.5f, color);
+            // keepCollider: true - PathRedirectHandler가 노드를 좌클릭으로 찍을 수 있어야 한다.
+            GameObject marker = MapVisualFactory.CreateMarker($"Node_{node.id}", container, node.position, 0.5f, color, keepCollider: true);
             NodeRenderers[node.id] = marker.GetComponent<Renderer>();
+            marker.AddComponent<NodeMarker>().nodeId = node.id;
         }
 
         TrailContainer = new GameObject("Trails").transform;
@@ -144,15 +146,18 @@ public class GraphMapSetup : MonoBehaviour
         {
             new MapNode { id = "base", position = new Vector2(0, 0), isPlayerBase = true, connectedNodeIds = new List<string> { "j1", "j2", "j3", "j4" } },
 
-            new MapNode { id = "j1", position = new Vector2(0, 3), isPlayerBase = false, connectedNodeIds = new List<string> { "base", "j2", "j4", "gA" } },
+            new MapNode { id = "j1", position = new Vector2(0, 3), isPlayerBase = false, connectedNodeIds = new List<string> { "base", "j2", "j4", "gA", "gE" } },
             new MapNode { id = "j2", position = new Vector2(3, 0), isPlayerBase = false, connectedNodeIds = new List<string> { "base", "j1", "j3", "gB" } },
-            new MapNode { id = "j3", position = new Vector2(0, -3), isPlayerBase = false, connectedNodeIds = new List<string> { "base", "j2", "j4", "gC" } },
-            new MapNode { id = "j4", position = new Vector2(-3, 0), isPlayerBase = false, connectedNodeIds = new List<string> { "base", "j3", "j1", "gD" } },
+            new MapNode { id = "j3", position = new Vector2(0, -3), isPlayerBase = false, connectedNodeIds = new List<string> { "base", "j2", "j4", "gC", "gF" } },
+            new MapNode { id = "j4", position = new Vector2(-3, 0), isPlayerBase = false, connectedNodeIds = new List<string> { "base", "j3", "j1", "gD", "gG" } },
 
             new MapNode { id = "gA", position = new Vector2(0, 6), isPlayerBase = false, connectedNodeIds = new List<string> { "j1" } },
             new MapNode { id = "gB", position = new Vector2(6, 0), isPlayerBase = false, connectedNodeIds = new List<string> { "j2" } },
             new MapNode { id = "gC", position = new Vector2(0, -6), isPlayerBase = false, connectedNodeIds = new List<string> { "j3" } },
             new MapNode { id = "gD", position = new Vector2(-6, 0), isPlayerBase = false, connectedNodeIds = new List<string> { "j4" } },
+            new MapNode { id = "gE", position = new Vector2(3, 5), isPlayerBase = false, connectedNodeIds = new List<string> { "j1" } },
+            new MapNode { id = "gF", position = new Vector2(-3, -5), isPlayerBase = false, connectedNodeIds = new List<string> { "j3" } },
+            new MapNode { id = "gG", position = new Vector2(-6, -4), isPlayerBase = false, connectedNodeIds = new List<string> { "j4" } },
         };
     }
 }

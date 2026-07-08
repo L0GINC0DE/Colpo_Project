@@ -87,13 +87,25 @@ public class GangManager : MonoBehaviour
         controller.Freeze(turns);
     }
 
-    // ----- 내부 구현 -----
+    public void Noise(string gangId, int turns)
+    {
+        GangController controller = FindController(gangId);
+        if (controller == null)
+        {
+            Debug.LogWarning($"[GangManager] 존재하지 않는 갱단id: {gangId}");
+            return;
+        }
+
+        controller.ApplyNoise(turns);
+    }
 
     // 스킬명 -> 갱단 대상 효과 매핑. 간선 대상 스킬(길목틀어막기/길만들기)은 MapStateManager가 처리한다.
     private void HandleSkillUsed(string skillName, string targetId, int durationTurns)
     {
         if (skillName == "얼리기")
             Freeze(targetId, durationTurns);
+        else if (skillName == "노이즈")
+            Noise(targetId, durationTurns);
     }
 
     private void HandleColpoResult(string gangId, int amount, string resultType)
@@ -106,15 +118,50 @@ public class GangManager : MonoBehaviour
                 break;
 
             case "fail":
-                GangController controller = FindController(gangId);
-                if (controller != null)
+                {
+                    // 금고 한도 초과("망"): 돈은 못 벌지만 바로 추적 시작 + 최대 추적 거리 1.5배 강제 전진.
+                    GangController controller = FindController(gangId);
+                    if (controller == null)
+                    {
+                        Debug.LogWarning($"[GangManager] 존재하지 않는 갱단id: {gangId}");
+                        break;
+                    }
+
                     controller.pursuing = true;
-                break;
+                    int steps = Mathf.CeilToInt(controller.gangData.maxChaseDistanceByRisk * 1.5f);
+                    ForceAdvance(controller, steps);
+                    break;
+                }
+
+            case "hackFail":
+                {
+                    // 미니게임(사전 해킹) 실패: 이 갱단만 2턴 해킹 락, 돈/추적 변화 없음.
+                    GangController controller = FindController(gangId);
+                    if (controller == null)
+                    {
+                        Debug.LogWarning($"[GangManager] 존재하지 않는 갱단id: {gangId}");
+                        break;
+                    }
+
+                    int currentTurn = TurnManager.Instance != null ? TurnManager.Instance.currentTurn : 0;
+                    controller.gangData.hackLockedUntilTurn = currentTurn + 2;
+                    Debug.Log($"[GangManager] {gangId} 해킹 실패 - 턴 {controller.gangData.hackLockedUntilTurn}까지 해킹 락");
+                    break;
+                }
 
             default:
                 Debug.LogWarning($"[GangManager] 알 수 없는 콜포 결과: {resultType}");
                 break;
         }
+    }
+
+    // GangController.ForceAdvance로 그대로 위임.
+    public void ForceAdvance(GangController gang, int steps)
+    {
+        if (gang == null || GraphMapSetup.Instance == null || MapStateManager.Instance == null)
+            return;
+
+        gang.ForceAdvance(steps, GraphMapSetup.Instance.Pathfinder, MapStateManager.Instance.IsEdgeBlocked);
     }
 
     private void CheckAllGangsDefeated()
