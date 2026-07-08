@@ -16,7 +16,7 @@ public static class GameEvents
     public static event Action<int> OnTurnAdvanced; // 현재 턴
     public static event Action<string> OnGangReachedBase; // gangId
     public static event Action OnAllGangsDefeated;
-    public static event Action<string, int, string> OnColpoResult;  // gangId, 금액, "safe"/"fail"/"colpo"
+    public static event Action<string, int, string> OnColpoResult;  // gangId, 금액, "safe"/"fail"/"colpo"/"hackFail"
 
     public static void GangDefeated(string gangId) => OnGangDefeated?.Invoke(gangId);
     public static void MoneyChanged(int amount) => OnMoneyChanged?.Invoke(amount);

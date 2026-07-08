@@ -7,11 +7,6 @@ public class TestDriver : MonoBehaviour
     [SerializeField] private string testGangId = "gA";
     [SerializeField] private int stealAmount = 300;
 
-    [Header("B: BlockEdge 테스트")]
-    [SerializeField] private string blockNodeA = "j1";
-    [SerializeField] private string blockNodeB = "base";
-    [SerializeField] private int blockDuration = 3;
-
     [Header("N: CreateEdge 테스트")]
     [SerializeField] private string newEdgeNodeA = "gA";
     [SerializeField] private string newEdgeNodeB = "base";
@@ -51,16 +46,16 @@ public class TestDriver : MonoBehaviour
             TurnManager.Instance.AdvanceTurn();
         }
 
-        if (keyboard.bKey.wasPressedThisFrame)
-        {
-            Debug.Log($"[TestDriver] B - BlockEdge({blockNodeA}, {blockNodeB}, {blockDuration}턴)");
-            MapStateManager.Instance.BlockEdge(blockNodeA, blockNodeB, TurnManager.Instance.currentTurn, blockDuration);
-        }
-
         if (keyboard.nKey.wasPressedThisFrame)
         {
             Debug.Log($"[TestDriver] N - CreateEdge({newEdgeNodeA}, {newEdgeNodeB}, {newEdgeDuration}턴)");
             MapStateManager.Instance.CreateEdge(newEdgeNodeA, newEdgeNodeB, TurnManager.Instance.currentTurn, newEdgeDuration);
+        }
+
+        if (keyboard.rKey.wasPressedThisFrame)
+        {
+            Debug.Log("[TestDriver] R - ResetGame (재시도)");
+            TurnManager.Instance.ResetGame();
         }
     }
 

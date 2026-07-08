@@ -151,6 +151,7 @@ MonoBehaviour:
   gangData: {fileID: 11400000, guid: 431b99ea9c9e7d74eb16158cab84710e, type: 2}
   pursuing: 0
   playerBaseId: base
+  spawnNodeId: gC
   moveDuration: 0.4
 --- !u!4 &153648055
 Transform:
@@ -159,6 +160,153 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 153648053}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 5.64715, y: 7.57254, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &200000001
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 200000003}
+  - component: {fileID: 200000002}
+  m_Layer: 0
+  m_Name: GangController5
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &200000002
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 200000001}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c2ff6fb9a42d6964483a6b3f313e161b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::GangController
+  gangData: {fileID: 11400000, guid: 664957eafec34aebabcbecfefa1e909b, type: 2}
+  pursuing: 0
+  playerBaseId: base
+  spawnNodeId: gE
+  moveDuration: 0.4
+--- !u!4 &200000003
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 200000001}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 5.64715, y: 7.57254, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &200000011
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 200000013}
+  - component: {fileID: 200000012}
+  m_Layer: 0
+  m_Name: GangController6
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &200000012
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 200000011}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c2ff6fb9a42d6964483a6b3f313e161b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::GangController
+  gangData: {fileID: 11400000, guid: f48a6061ca3148c2bd9b256f2b2a96f9, type: 2}
+  pursuing: 0
+  playerBaseId: base
+  spawnNodeId: gF
+  moveDuration: 0.4
+--- !u!4 &200000013
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 200000011}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 5.64715, y: 7.57254, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &200000021
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 200000023}
+  - component: {fileID: 200000022}
+  m_Layer: 0
+  m_Name: GangController7
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &200000022
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 200000021}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c2ff6fb9a42d6964483a6b3f313e161b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::GangController
+  gangData: {fileID: 11400000, guid: e136201656b94b2697aa4377729d7f0b, type: 2}
+  pursuing: 0
+  playerBaseId: base
+  spawnNodeId: gG
+  moveDuration: 0.4
+--- !u!4 &200000023
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 200000021}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 5.64715, y: 7.57254, z: 0}
@@ -245,6 +393,7 @@ MonoBehaviour:
   gangData: {fileID: 11400000, guid: 0342a2f62c5f3da4694392f3f2db5e32, type: 2}
   pursuing: 0
   playerBaseId: base
+  spawnNodeId: gB
   moveDuration: 0.4
 --- !u!4 &481269462
 Transform:
@@ -275,6 +424,10 @@ GameObject:
   - component: {fileID: 692769359}
   - component: {fileID: 692769363}
   - component: {fileID: 692769364}
+  - component: {fileID: 692769365}
+  - component: {fileID: 692769366}
+  - component: {fileID: 692769367}
+  - component: {fileID: 692769368}
   m_Layer: 0
   m_Name: Camera
   m_TagString: Untagged
@@ -429,7 +582,64 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6c72da97cc841d34784808b5b2599e47, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::AtmClickHandler
-  stealAmount: 0
+  stealAmount: 300
+--- !u!114 &692769365
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 692769358}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 004017ede4444386befe06b68c4ecc3c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::WallItemHandler
+  wallCharges: 3
+  wallDurationTurns: 3
+--- !u!114 &692769366
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 692769358}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b7ed39bcadf4f4c4c9ff527a388342d2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::FreezeItemHandler
+  freezeCharges: 3
+  freezeDuration: 1
+  iceMaterial: {fileID: 2100000, guid: 31f487170e69a864992f7e58e046b8c7, type: 2}
+  icePrefab: {fileID: 7980310448222792401, guid: ab1ad223b65e1ed4ca8caf76a72d9286, type: 3}
+--- !u!114 &692769367
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 692769358}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2d620bc05b0d4fdf8233f90f075d1d0c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::PathRedirectHandler
+  charges: 3
+--- !u!114 &692769368
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 692769358}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: daedd58049b04432b08435814a23bb05, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::NoiseItemHandler
+  noiseCharges: 3
+  noiseDuration: 2
 --- !u!1 &901191724
 GameObject:
   m_ObjectHideFlags: 0
@@ -506,6 +716,7 @@ MonoBehaviour:
   gangData: {fileID: 11400000, guid: 82f74af5df847704f86bdedc13ccea24, type: 2}
   pursuing: 0
   playerBaseId: base
+  spawnNodeId: gD
   moveDuration: 0.4
 --- !u!4 &1647697627
 Transform:
@@ -568,6 +779,7 @@ MonoBehaviour:
     - j2
     - j4
     - gA
+    - gE
   - id: j2
     position: {x: 3, y: 0}
     isPlayerBase: 0
@@ -584,6 +796,7 @@ MonoBehaviour:
     - j2
     - j4
     - gC
+    - gF
   - id: j4
     position: {x: -3, y: 0}
     isPlayerBase: 0
@@ -592,6 +805,7 @@ MonoBehaviour:
     - j3
     - j1
     - gD
+    - gG
   - id: gA
     position: {x: 0, y: 6}
     isPlayerBase: 0
@@ -609,6 +823,21 @@ MonoBehaviour:
     - j3
   - id: gD
     position: {x: -6, y: 0}
+    isPlayerBase: 0
+    connectedNodeIds:
+    - j4
+  - id: gE
+    position: {x: 3, y: 5}
+    isPlayerBase: 0
+    connectedNodeIds:
+    - j1
+  - id: gF
+    position: {x: -3, y: -5}
+    isPlayerBase: 0
+    connectedNodeIds:
+    - j3
+  - id: gG
+    position: {x: -6, y: -4}
     isPlayerBase: 0
     connectedNodeIds:
     - j4
@@ -659,6 +888,7 @@ MonoBehaviour:
   gangData: {fileID: 11400000, guid: 7f11f0be007ac874d8585fbcd6bf94ce, type: 2}
   pursuing: 0
   playerBaseId: base
+  spawnNodeId: gA
   moveDuration: 0.4
 --- !u!4 &1724091212
 Transform:
@@ -706,9 +936,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::TestDriver
   testGangId: gA
   stealAmount: 300
-  blockNodeA: j1
-  blockNodeB: base
-  blockDuration: 3
   newEdgeNodeA: gA
   newEdgeNodeB: base
   newEdgeDuration: 3
@@ -785,3 +1012,6 @@ SceneRoots:
   - {fileID: 481269462}
   - {fileID: 153648055}
   - {fileID: 1647697627}
+  - {fileID: 200000003}
+  - {fileID: 200000013}
+  - {fileID: 200000023}

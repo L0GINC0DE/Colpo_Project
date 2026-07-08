@@ -11,21 +11,25 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="2aef30f8-3169-45b4-af34-d924f3282f78" name="변경" comment="">
-      <change afterPath="$PROJECT_DIR$/Assets/01_Scripts/LSO/LSO_ColpoManager.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Assets/01_Scripts/LSO/LSO_ColpoManager.cs.meta" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Assets/01_Scripts/LSO/LSO_ColpoSystem.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Assets/01_Scripts/LSO/LSO_ColpoSystem.cs.meta" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/.idea.Colpo_Project/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.Colpo_Project/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/00_Scenes/LSO/LSO_TestScene.unity" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/00_Scenes/LSO/LSO_TestScene.unity" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/00_Scenes/LSO/LSO_TestScene/LightingData.asset" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/00_Scenes/LSO/LSO_TestScene/LightingData.asset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/00_Scenes/LSO/LSO_TestScene/LightingData.asset.meta" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/00_Scenes/LSO/LSO_TestScene/LightingData.asset.meta" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/00_Scenes/LSO/LSO_TestScene/ReflectionProbe-0.exr" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/00_Scenes/LSO/LSO_TestScene/ReflectionProbe-0.exr" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/00_Scenes/LSO/LSO_TestScene/ReflectionProbe-0.exr.meta" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/00_Scenes/LSO/LSO_TestScene/ReflectionProbe-0.exr.meta" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/00_Scenes/LSO/LSO_TestScene/Volume Profile.asset" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/00_Scenes/LSO/LSO_TestScene/Volume Profile.asset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/01_Scripts/LSO/LSO_ColpoUI.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/01_Scripts/LSO/LSO_ColpoUI.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/06_Effects/LSO/CRT.shadergraph" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/06_Effects/LSO/CRT.shadergraph" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/06_Effects/LSO/CRTFullScreenMaterial.mat" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/06_Effects/LSO/CRTFullScreenMaterial.mat" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ProjectSettings/URPProjectSettings.asset" beforeDir="false" afterPath="$PROJECT_DIR$/ProjectSettings/URPProjectSettings.asset" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.claude/settings.json" beforeDir="false" afterPath="$PROJECT_DIR$/.claude/settings.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/00_Scenes/LDY/LDY_AStar.unity" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/00_Scenes/LDY/LDY_AStar.unity" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/01_Scripts/LDY/AtmClickHandler.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/01_Scripts/LDY/AtmClickHandler.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/01_Scripts/LDY/Core/GameEvents.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/01_Scripts/LDY/Core/GameEvents.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/01_Scripts/LDY/Core/GangData.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/01_Scripts/LDY/Core/GangData.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/01_Scripts/LDY/Core/GangType.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/01_Scripts/LDY/Core/GangType.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/01_Scripts/LDY/FreezeItemHandler.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/01_Scripts/LDY/FreezeItemHandler.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/01_Scripts/LDY/Gang/GangController.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/01_Scripts/LDY/Gang/GangController.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/01_Scripts/LDY/Gang/GraphMapSetup.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/01_Scripts/LDY/Gang/GraphMapSetup.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/01_Scripts/LDY/Managers/GangManager.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/01_Scripts/LDY/Managers/GangManager.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/01_Scripts/LDY/Managers/TurnManager.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/01_Scripts/LDY/Managers/TurnManager.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/01_Scripts/LDY/WallItemHandler.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/01_Scripts/LDY/WallItemHandler.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/06_Effects/LDY/Froze.shadergraph" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/06_Effects/LDY/Froze.shadergraph" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/06_Effects/LDY/FrozeMaterial.mat" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/06_Effects/LDY/FrozeMaterial.mat" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/08_SO/LDY/gA.asset" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/08_SO/LDY/gA.asset" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/08_SO/LDY/gB.asset" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/08_SO/LDY/gB.asset" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/08_SO/LDY/gC.asset" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/08_SO/LDY/gC.asset" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/08_SO/LDY/gD.asset" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/08_SO/LDY/gD.asset" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Settings/PC_Renderer.asset" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Settings/PC_Renderer.asset" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -34,13 +38,6 @@
   </component>
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
-  </component>
-  <component name="HighlightingSettingsPerFile">
-    <setting file="file://$PROJECT_DIR$/Assets/01_Scripts/LSO/LSO_ColpoSystem.cs" root0="FORCE_HIGHLIGHTING" />
-  </component>
-  <component name="McpProjectServerCommands">
-    <commands />
-    <urls />
   </component>
   <component name="ProjectColorInfo">{
   &quot;associatedIndex&quot;: 2,
@@ -54,7 +51,6 @@
   <component name="PropertiesComponent">{
   &quot;keyToString&quot;: {
     &quot;ModuleVcsDetector.initialDetectionPerformed&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.MCP Project settings loaded&quot;: &quot;true&quot;,
     &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
     &quot;RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager.252&quot;: &quot;true&quot;,
     &quot;RunOnceActivity.cidr.known.project.marker&quot;: &quot;true&quot;,
@@ -63,7 +59,7 @@
     &quot;RunOnceActivity.typescript.service.memoryLimit.init&quot;: &quot;true&quot;,
     &quot;cidr.known.project.marker&quot;: &quot;true&quot;,
     &quot;codeWithMe.voiceChat.enabledByDefault&quot;: &quot;false&quot;,
-    &quot;git-widget-placeholder&quot;: &quot;LSO&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;LDY&quot;,
     &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
     &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
     &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
@@ -117,9 +113,8 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1783424358079</updated>
-      <workItem from="1783424358080" duration="1603000" />
-      <workItem from="1783432965023" duration="4379000" />
-      <workItem from="1783506500035" duration="2300000" />
+      <workItem from="1783424358080" duration="4700000" />
+      <workItem from="1783507416232" duration="322000" />
     </task>
     <servers />
   </component>

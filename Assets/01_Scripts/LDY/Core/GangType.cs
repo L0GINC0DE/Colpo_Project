@@ -1,4 +1,3 @@
-// 갱단 성향(이동 AI 패턴).
 public enum GangType
 {
     Direct,       // 직진파: 추적 시작 시 A* 한 번만 계산해 캐싱, 막히면 재탐색 없이 대기
