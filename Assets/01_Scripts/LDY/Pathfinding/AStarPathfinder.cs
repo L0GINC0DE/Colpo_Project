@@ -2,7 +2,6 @@ using System;
 using System.Collections.Generic;
 using UnityEngine;
 
-// [내부 구현] A* 경로 탐색.
 // 각 노드마다 f = g + h 값을 계산해서, f가 가장 작은 노드부터 우선 방문한다.
 //   g = 시작 노드에서 현재 노드까지 "실제로" 이동한 거리 (지금까지 확정된 비용)
 //   h = 현재 노드에서 목표까지 "남았을 것으로 추정되는" 거리 (휴리스틱, 여기서는 좌표 간 유클리드 거리)
@@ -25,9 +24,6 @@ public class AStarPathfinder
     }
 
     // start -> goal 최단 경로를 찾아 노드 id 리스트로 반환한다 (start와 goal 포함).
-    // 경로가 없으면 null을 반환한다.
-    // isEdgeBlocked(a, b)가 true를 반환하는 간선은 이웃 순회에서 아예 제외되므로,
-    // 막힌 길은 A*가 자동으로 우회하게 된다.
     public List<string> FindPath(string start, string goal, Func<string, string, bool> isEdgeBlocked = null)
     {
         if (!nodes.ContainsKey(start) || !nodes.ContainsKey(goal))
@@ -44,9 +40,6 @@ public class AStarPathfinder
         {
             string current = openHeap.Pop();
 
-            // 지연 삭제(lazy deletion): 힙에는 같은 노드가 서로 다른 priority로 여러 번
-            // 들어갈 수 있다. 이미 확정(visited)된 노드가 다시 튀어나오면 힙 내부를 뒤져서
-            // 지우는 대신, 그냥 이번 것을 버리고 다음으로 넘어간다.
             if (visited.Contains(current))
                 continue;
             visited.Add(current);

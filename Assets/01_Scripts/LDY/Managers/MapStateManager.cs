@@ -1,8 +1,6 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-// [내부 구현] 벽(막힌 길)과 임시 길(새로 만든 길)을 관리하는 싱글톤.
-// 팀원 코드에서 직접 호출해도 되는 public API: BlockEdge / CreateEdge / IsEdgeBlocked.
 public class MapStateManager : MonoBehaviour
 {
     public static MapStateManager Instance { get; private set; }
@@ -27,8 +25,6 @@ public class MapStateManager : MonoBehaviour
     private readonly List<BlockedEdge> blockedEdges = new List<BlockedEdge>();
     private readonly List<TemporaryEdge> temporaryEdges = new List<TemporaryEdge>();
 
-    // CreateEdge/RemoveExpired에서 노드의 connectedNodeIds를 직접 수정해야 하므로
-    // GraphMapSetup이 만든 노드 그래프를 주입받는다 (GraphMapSetup.Start 참고).
     private Dictionary<string, MapNode> nodes;
 
     private void Awake()
@@ -59,6 +55,8 @@ public class MapStateManager : MonoBehaviour
     public void BlockEdge(string a, string b, int currentTurn, int durationTurns)
     {
         blockedEdges.Add(new BlockedEdge { nodeA = a, nodeB = b, expireTurn = currentTurn + durationTurns });
+        if (GraphMapSetup.Instance != null)
+            GraphMapSetup.Instance.SetWallVisual(a, b, true);
         Debug.Log($"[MapState] 간선 차단: {a} - {b} (턴 {currentTurn + durationTurns}까지)");
     }
 
@@ -77,7 +75,29 @@ public class MapStateManager : MonoBehaviour
         Debug.Log($"[MapState] 임시 길 생성: {a} - {b} (턴 {currentTurn + durationTurns}까지)");
     }
 
-    // 양방향 체크: a-b든 b-a든 같은 간선으로 취급한다.
+    // 게임 리스타트: 걸려있던 벽/임시 길을 전부 걷어내고, 임시 길로 추가됐던 connectedNodeIds도 되돌린다.
+    public void ResetState()
+    {
+        foreach (BlockedEdge edge in blockedEdges)
+        {
+            if (GraphMapSetup.Instance != null)
+                GraphMapSetup.Instance.SetWallVisual(edge.nodeA, edge.nodeB, false);
+        }
+        blockedEdges.Clear();
+
+        if (nodes != null)
+        {
+            foreach (TemporaryEdge edge in temporaryEdges)
+            {
+                if (nodes.TryGetValue(edge.nodeA, out MapNode nodeA))
+                    nodeA.connectedNodeIds.Remove(edge.nodeB);
+                if (nodes.TryGetValue(edge.nodeB, out MapNode nodeB))
+                    nodeB.connectedNodeIds.Remove(edge.nodeA);
+            }
+        }
+        temporaryEdges.Clear();
+    }
+
     public bool IsEdgeBlocked(string a, string b)
     {
         foreach (BlockedEdge edge in blockedEdges)
@@ -94,7 +114,11 @@ public class MapStateManager : MonoBehaviour
         {
             bool expired = edge.expireTurn <= currentTurn;
             if (expired)
+            {
+                if (GraphMapSetup.Instance != null)
+                    GraphMapSetup.Instance.SetWallVisual(edge.nodeA, edge.nodeB, false);
                 Debug.Log($"[MapState] 벽 해제: {edge.nodeA} - {edge.nodeB}");
+            }
             return expired;
         });
 

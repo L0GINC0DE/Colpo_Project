@@ -2,12 +2,6 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
-// [테스트 전용] 맵이 넓어서 카메라로 둘러볼 수 있게 만든 간단한 컨트롤러.
-// TestDriver가 S/Space/B/N 키를 이미 쓰고 있어서, 겹치지 않게 방향키/마우스만 사용한다.
-//   방향키       : 카메라 이동
-//   마우스 우클릭 드래그 : 카메라 이동
-//   마우스 스크롤 : 확대/축소 (orthographic size 조절)
-// 카메라는 GraphMapSetup의 노드 좌표 범위를 벗어나지 못하도록 매 프레임 클램프된다.
 [RequireComponent(typeof(Camera))]
 public class MapCameraController : MonoBehaviour
 {
@@ -37,7 +31,6 @@ public class MapCameraController : MonoBehaviour
         ClampToMapBounds();
     }
 
-    // GraphMapSetup의 노드 좌표 최소/최대값으로 맵 경계를 한 번만 계산해 캐싱한다.
     private void EnsureBounds()
     {
         if (boundsReady)

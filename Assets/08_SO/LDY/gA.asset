@@ -15,7 +15,10 @@ MonoBehaviour:
   gangName: Direct
   type: 0
   riskLevel: 0
-  maxFunds: 100
-  currentFunds: 100
+  isRiskFixed: 0
+  maxFunds: 1000
+  currentFunds: 1000
   currentNodeId: gA
   damageResistance: 0
+  hackLockedUntilTurn: 0
+  maxChaseDistanceByRisk: 3
