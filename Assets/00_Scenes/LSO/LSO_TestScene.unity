@@ -1443,6 +1443,7 @@ MonoBehaviour:
   playerCam: {fileID: 1973416992}
   duration: 0.3
   hinge: {fileID: 1390286127}
+  fullscreenMaterial: {fileID: 2100000, guid: ef851a21725c9d244b6804ed4d470fc6, type: 2}
 --- !u!114 &2021437385
 MonoBehaviour:
   m_ObjectHideFlags: 0
