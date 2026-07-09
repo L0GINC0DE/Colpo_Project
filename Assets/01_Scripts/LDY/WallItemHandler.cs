@@ -1,7 +1,7 @@
 using UnityEngine;
 using UnityEngine.InputSystem;
 
-// [테스트/플레이어 조작] 벽 아이템. B로 조준 모드를 켜면(커서가 벽돌 모양으로 바뀜)
+// 벽 아이템. A로 조준 모드를 켜면(커서가 벽돌 모양으로 바뀜)
 // 다음 좌클릭에 찍은 간선(EdgeMarker 콜라이더)을 wallDurationTurns턴 동안 막는다.
 // 조준 중엔 AtmClickHandler(훔치기)를 잠깐 꺼서 같은 좌클릭에 훔치기가 같이 발동하지 않게 한다.
 [RequireComponent(typeof(Camera))]
@@ -37,7 +37,7 @@ public class WallItemHandler : MonoBehaviour
     private void Update()
     {
         Keyboard keyboard = Keyboard.current;
-        if (keyboard != null && keyboard.bKey.wasPressedThisFrame)
+        if (keyboard != null && keyboard.aKey.wasPressedThisFrame)
             ToggleArmed();
 
         if (!armed)
@@ -64,7 +64,8 @@ public class WallItemHandler : MonoBehaviour
         Disarm();
     }
 
-    private void ToggleArmed()
+    // UI 버튼(SkillMenu)의 OnClick과 키보드(A) 양쪽에서 호출.
+    public void ToggleArmed()
     {
         if (armed)
         {
@@ -84,16 +85,18 @@ public class WallItemHandler : MonoBehaviour
             PathRedirectHandler.Instance.Disarm();
         if (NoiseItemHandler.Instance != null)
             NoiseItemHandler.Instance.Disarm();
+        if (AttackSkillItemHandler.Instance != null)
+            AttackSkillItemHandler.Instance.Disarm();
 
         armed = true;
         if (atmClickHandler != null)
             atmClickHandler.enabled = false;
 
         Cursor.SetCursor(cursorTexture, new Vector2(cursorTexture.width, cursorTexture.height) * 0.5f, CursorMode.Auto);
-        Debug.Log("[WallItemHandler] 벽 조준 모드 - 막을 간선을 좌클릭하세요 (다시 B를 누르면 취소)");
+        Debug.Log("[WallItemHandler] 벽 조준 모드 - 막을 간선을 좌클릭하세요 (다시 A를 누르면 취소)");
     }
 
-    // 다른 아이템(F: 얼리기)이 조준 모드를 켤 때 이쪽을 취소시킬 수 있도록 공개해둔다.
+    // 다른 아이템(S: 얼리기)이 조준 모드를 켤 때 이쪽을 취소시킬 수 있도록 공개해둔다.
     public void Disarm()
     {
         if (!armed)

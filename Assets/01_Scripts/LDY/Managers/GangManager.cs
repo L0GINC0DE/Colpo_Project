@@ -106,6 +106,8 @@ public class GangManager : MonoBehaviour
             Freeze(targetId, durationTurns);
         else if (skillName == "노이즈")
             Noise(targetId, durationTurns);
+        else if (skillName == "기밀정보유출")
+            Debug.Log($"[GangManager] {targetId} 대상 기밀정보유출 사용 - 실제 효과는 아직 미구현(플레이스홀더).");
     }
 
     private void HandleColpoResult(string gangId, int amount, string resultType)
