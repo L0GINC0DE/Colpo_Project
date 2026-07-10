@@ -10,8 +10,8 @@ namespace _01_Scripts.LSO
         private float timer;
         private const float TickInterval = 0.01f;
 
-        public GangData data;
-        private GangType gangType;
+        public LDY_GangData data;
+        private LDY_GangType gangType;
 
         private bool resultAlreadyGiven;
         private Coroutine colpoTimeCoroutine; // ← 코루틴 참조 추적

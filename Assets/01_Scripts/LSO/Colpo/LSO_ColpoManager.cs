@@ -15,7 +15,7 @@ namespace _01_Scripts.LSO
         /// <summary>
         /// 콜포 결과를 알려주는 이벤트
         /// </summary>
-        public static Action<ColpoResultType, int, GangType> OnColpoResult;
+        public static Action<ColpoResultType, int, LDY_GangType> OnColpoResult;
 
         public int ColpoMax { get; private set; } = 1000;
         private int ColpoMin { get; set; } = 0;
