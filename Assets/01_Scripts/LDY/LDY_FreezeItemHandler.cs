@@ -1,12 +1,12 @@
-using UnityEngine;
+﻿using UnityEngine;
 using UnityEngine.InputSystem;
 
 // 얼리기 아이템. S로 조준 모드를 켜면(커서가 얼음 모양으로 바뀜)
 // 다음 좌클릭에 맞은 갱단을 freezeDuration턴 얼린다.
 [RequireComponent(typeof(Camera))]
-public class FreezeItemHandler : MonoBehaviour
+public class LDY_FreezeItemHandler : MonoBehaviour
 {
-    public static FreezeItemHandler Instance { get; private set; }
+    public static LDY_FreezeItemHandler Instance { get; private set; }
 
     [SerializeField] private int freezeCharges = 3;
     [SerializeField] private int freezeDuration = 1;
@@ -23,7 +23,7 @@ public class FreezeItemHandler : MonoBehaviour
 
     private int initialFreezeCharges;
     private Camera cam;
-    private AtmClickHandler atmClickHandler;
+    private LDY_AtmClickHandler atmClickHandler;
     private Texture2D cursorTexture;
     private bool armed;
 
@@ -31,7 +31,7 @@ public class FreezeItemHandler : MonoBehaviour
     {
         Instance = this;
         cam = GetComponent<Camera>();
-        atmClickHandler = GetComponent<AtmClickHandler>();
+        atmClickHandler = GetComponent<LDY_AtmClickHandler>();
         initialFreezeCharges = freezeCharges;
         cursorTexture = BuildCursorTexture();
     }
@@ -59,12 +59,12 @@ public class FreezeItemHandler : MonoBehaviour
         Ray ray = cam.ScreenPointToRay(mouse.position.ReadValue());
         if (Physics.Raycast(ray, out RaycastHit hit))
         {
-            GangController controller = hit.collider.GetComponentInParent<GangController>();
+            LDY_GangController controller = hit.collider.GetComponentInParent<LDY_GangController>();
             if (controller != null && controller.gangData != null)
             {
-                GangManager.Instance.Freeze(controller.gangData.gangName, freezeDuration);
+                LDY_GangManager.Instance.Freeze(controller.gangData.gangName, freezeDuration);
                 freezeCharges--;
-                Debug.Log($"[FreezeItemHandler] {controller.gangData.gangName} 얼림 ({freezeDuration}턴, 남은 개수: {freezeCharges})");
+                Debug.Log($"[LDY_FreezeItemHandler] {controller.gangData.gangName} 얼림 ({freezeDuration}턴, 남은 개수: {freezeCharges})");
             }
         }
 
@@ -82,25 +82,25 @@ public class FreezeItemHandler : MonoBehaviour
 
         if (freezeCharges <= 0)
         {
-            Debug.Log("[FreezeItemHandler] 얼리기 개수를 다 썼습니다.");
+            Debug.Log("[LDY_FreezeItemHandler] 얼리기 개수를 다 썼습니다.");
             return;
         }
 
-        if (WallItemHandler.Instance != null)
-            WallItemHandler.Instance.Disarm();
-        if (PathRedirectHandler.Instance != null)
-            PathRedirectHandler.Instance.Disarm();
-        if (NoiseItemHandler.Instance != null)
-            NoiseItemHandler.Instance.Disarm();
-        if (AttackSkillItemHandler.Instance != null)
-            AttackSkillItemHandler.Instance.Disarm();
+        if (LDY_WallItemHandler.Instance != null)
+            LDY_WallItemHandler.Instance.Disarm();
+        if (LDY_PathRedirectHandler.Instance != null)
+            LDY_PathRedirectHandler.Instance.Disarm();
+        if (LDY_NoiseItemHandler.Instance != null)
+            LDY_NoiseItemHandler.Instance.Disarm();
+        if (LDY_AttackSkillItemHandler.Instance != null)
+            LDY_AttackSkillItemHandler.Instance.Disarm();
 
         armed = true;
         if (atmClickHandler != null)
             atmClickHandler.enabled = false;
 
         Cursor.SetCursor(cursorTexture, new Vector2(cursorTexture.width, cursorTexture.height) * 0.5f, CursorMode.Auto);
-        Debug.Log("[FreezeItemHandler] 얼리기 조준 모드 - 갱단을 좌클릭하세요 (다시 S를 누르면 취소)");
+        Debug.Log("[LDY_FreezeItemHandler] 얼리기 조준 모드 - 갱단을 좌클릭하세요 (다시 S를 누르면 취소)");
     }
 
     // 다른 아이템(A: 벽)이 조준 모드를 켤 때 이쪽을 취소시킬 수 있도록 공개해둔다.

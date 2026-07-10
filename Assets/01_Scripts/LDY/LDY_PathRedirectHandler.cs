@@ -1,4 +1,4 @@
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -7,19 +7,19 @@ using UnityEngine.InputSystem;
 // 노드로는 못 감 - 무조건 앞으로만). 경로를 그리다가 다시 F를 누르면 지금까지 그린 경로를
 // 확정해서 그 갱단에게 적용한다. 사이 안 좋은 갱단끼리 같은 자리로 몰아넣는 용도로 쓴다.
 [RequireComponent(typeof(Camera))]
-public class PathRedirectHandler : MonoBehaviour
+public class LDY_PathRedirectHandler : MonoBehaviour
 {
-    public static PathRedirectHandler Instance { get; private set; }
+    public static LDY_PathRedirectHandler Instance { get; private set; }
 
     [SerializeField] private int charges = 3;
 
     private int initialCharges;
     private Camera cam;
-    private AtmClickHandler atmClickHandler;
+    private LDY_AtmClickHandler atmClickHandler;
     private Texture2D cursorTexture;
     private bool armed;
 
-    private GangController selectedGang;
+    private LDY_GangController selectedGang;
     private List<string> pathBuilder;
     private LineRenderer previewLine;
 
@@ -27,7 +27,7 @@ public class PathRedirectHandler : MonoBehaviour
     {
         Instance = this;
         cam = GetComponent<Camera>();
-        atmClickHandler = GetComponent<AtmClickHandler>();
+        atmClickHandler = GetComponent<LDY_AtmClickHandler>();
         initialCharges = charges;
         cursorTexture = BuildCursorTexture();
     }
@@ -67,34 +67,34 @@ public class PathRedirectHandler : MonoBehaviour
 
     private void TrySelectGang(RaycastHit hit)
     {
-        GangController controller = hit.collider.GetComponentInParent<GangController>();
+        LDY_GangController controller = hit.collider.GetComponentInParent<LDY_GangController>();
         if (controller == null || !controller.pursuing)
         {
-            Debug.Log("[PathRedirectHandler] 추적 중인 갱단만 고를 수 있습니다.");
+            Debug.Log("[LDY_PathRedirectHandler] 추적 중인 갱단만 고를 수 있습니다.");
             return;
         }
 
         selectedGang = controller;
         pathBuilder = new List<string> { controller.gangData.currentNodeId };
-        Debug.Log($"[PathRedirectHandler] {controller.gangData.gangName} 선택 - 이어질 노드를 좌클릭하세요 (F로 확정)");
+        Debug.Log($"[LDY_PathRedirectHandler] {controller.gangData.gangName} 선택 - 이어질 노드를 좌클릭하세요 (F로 확정)");
     }
 
     private void TryExtendPath(RaycastHit hit)
     {
-        NodeMarker node = hit.collider.GetComponent<NodeMarker>();
+        LDY_NodeMarker node = hit.collider.GetComponent<LDY_NodeMarker>();
         if (node == null)
             return;
 
         if (pathBuilder.Contains(node.nodeId))
         {
-            Debug.Log("[PathRedirectHandler] 이미 지나온 노드로는 못 돌아갑니다 (앞으로만 진행 가능).");
+            Debug.Log("[LDY_PathRedirectHandler] 이미 지나온 노드로는 못 돌아갑니다 (앞으로만 진행 가능).");
             return;
         }
 
         string lastNodeId = pathBuilder[pathBuilder.Count - 1];
-        if (!GraphMapSetup.Instance.Nodes.TryGetValue(lastNodeId, out MapNode last) || !last.connectedNodeIds.Contains(node.nodeId))
+        if (!LDY_GraphMapSetup.Instance.Nodes.TryGetValue(lastNodeId, out LDY_MapNode last) || !last.connectedNodeIds.Contains(node.nodeId))
         {
-            Debug.Log("[PathRedirectHandler] 인접한 노드만 이어서 찍을 수 있습니다.");
+            Debug.Log("[LDY_PathRedirectHandler] 인접한 노드만 이어서 찍을 수 있습니다.");
             return;
         }
 
@@ -115,18 +115,18 @@ public class PathRedirectHandler : MonoBehaviour
     {
         if (charges <= 0)
         {
-            Debug.Log("[PathRedirectHandler] 경로 재지정 개수를 다 썼습니다.");
+            Debug.Log("[LDY_PathRedirectHandler] 경로 재지정 개수를 다 썼습니다.");
             return;
         }
 
-        if (FreezeItemHandler.Instance != null)
-            FreezeItemHandler.Instance.Disarm();
-        if (WallItemHandler.Instance != null)
-            WallItemHandler.Instance.Disarm();
-        if (NoiseItemHandler.Instance != null)
-            NoiseItemHandler.Instance.Disarm();
-        if (AttackSkillItemHandler.Instance != null)
-            AttackSkillItemHandler.Instance.Disarm();
+        if (LDY_FreezeItemHandler.Instance != null)
+            LDY_FreezeItemHandler.Instance.Disarm();
+        if (LDY_WallItemHandler.Instance != null)
+            LDY_WallItemHandler.Instance.Disarm();
+        if (LDY_NoiseItemHandler.Instance != null)
+            LDY_NoiseItemHandler.Instance.Disarm();
+        if (LDY_AttackSkillItemHandler.Instance != null)
+            LDY_AttackSkillItemHandler.Instance.Disarm();
 
         armed = true;
         selectedGang = null;
@@ -135,7 +135,7 @@ public class PathRedirectHandler : MonoBehaviour
             atmClickHandler.enabled = false;
 
         Cursor.SetCursor(cursorTexture, new Vector2(cursorTexture.width, cursorTexture.height) * 0.5f, CursorMode.Auto);
-        Debug.Log("[PathRedirectHandler] 경로 재지정 모드 - 추적 중인 갱단을 좌클릭하세요 (F를 다시 누르면 취소/확정)");
+        Debug.Log("[LDY_PathRedirectHandler] 경로 재지정 모드 - 추적 중인 갱단을 좌클릭하세요 (F를 다시 누르면 취소/확정)");
     }
 
     private void Confirm()
@@ -144,11 +144,11 @@ public class PathRedirectHandler : MonoBehaviour
         {
             selectedGang.SetOverridePath(pathBuilder);
             charges--;
-            Debug.Log($"[PathRedirectHandler] 경로 확정 (남은 개수: {charges})");
+            Debug.Log($"[LDY_PathRedirectHandler] 경로 확정 (남은 개수: {charges})");
         }
         else
         {
-            Debug.Log("[PathRedirectHandler] 경로가 없어서 취소합니다.");
+            Debug.Log("[LDY_PathRedirectHandler] 경로가 없어서 취소합니다.");
         }
 
         Disarm();
@@ -186,7 +186,7 @@ public class PathRedirectHandler : MonoBehaviour
         previewLine.positionCount = pathBuilder.Count;
         for (int i = 0; i < pathBuilder.Count; i++)
         {
-            if (GraphMapSetup.Instance.Nodes.TryGetValue(pathBuilder[i], out MapNode node))
+            if (LDY_GraphMapSetup.Instance.Nodes.TryGetValue(pathBuilder[i], out LDY_MapNode node))
                 previewLine.SetPosition(i, new Vector3(node.position.x, node.position.y, -0.07f));
         }
     }

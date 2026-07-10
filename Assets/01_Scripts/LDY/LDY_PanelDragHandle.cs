@@ -1,10 +1,10 @@
-using UnityEngine;
+﻿using UnityEngine;
 using UnityEngine.EventSystems;
 
 // 버튼이 아닌 배경(BackGround) 위에 붙여서, 여기를 마우스로 잡고 끌면 부모 패널
 // (SkillMenu) 전체가 따라 움직인다. 버튼 위에 붙이면 클릭이랑 드래그가 서로 씹힌다.
 // 패널이 화면(캔버스) 밖으로 나가지 않도록 위치를 캔버스 범위 안으로 잘라낸다.
-public class PanelDragHandle : MonoBehaviour, IDragHandler
+public class LDY_PanelDragHandle : MonoBehaviour, IDragHandler
 {
     [SerializeField] private RectTransform panelToMove; // 비워두면 부모 RectTransform을 씀.
 

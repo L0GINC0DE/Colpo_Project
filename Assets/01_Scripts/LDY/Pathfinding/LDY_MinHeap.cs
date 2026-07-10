@@ -1,7 +1,7 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 
-public class MinHeap<T>
+public class LDY_MinHeap<T>
 {
     private readonly List<(T item, float priority)> heap = new List<(T item, float priority)>();
 

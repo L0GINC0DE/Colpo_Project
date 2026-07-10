@@ -1,9 +1,9 @@
-using System;
+﻿using System;
 
 // 이벤트 버스.
 // 팀원들은 서로의 내부 구현(Managers/, Gang/ 등)을 직접 참조하지 않고,
 // 이 클래스의 이벤트를 구독하거나 아래 static 메서드로 이벤트를 발행해서 통신한다.
-public static class GameEvents
+public static class LDY_GameEvents
 {
     public static event Action<string> OnGangDefeated; // gangId
     public static event Action<int> OnMoneyChanged; // 변화량

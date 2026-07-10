@@ -1,8 +1,8 @@
-using UnityEngine;
+﻿using UnityEngine;
 
 // SkillMenu 패널 전체 관리. 위쪽 << 버튼(OnClick)에 ToggleCollapsed를 연결하면
 // 유니티 인스펙터 접듯이 버튼 목록을 숨기고 패널을 작게 줄인다.
-public class SkillMenuController : MonoBehaviour
+public class LDY_SkillMenuController : MonoBehaviour
 {
     [SerializeField] private RectTransform content; // 접었다 펼 대상(버튼들이 있는 BackGround).
     [SerializeField] private RectTransform collapseArrow; // 접히면 좌우로 뒤집어서 방향을 보여줌.

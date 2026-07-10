@@ -1,10 +1,10 @@
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using UnityEditor;
 using UnityEditor.SceneManagement;
 using UnityEngine;
 
-[CustomEditor(typeof(GraphMapSetup))]
-public class GraphMapSetupEditor : Editor
+[CustomEditor(typeof(LDY_GraphMapSetup))]
+public class LDY_GraphMapSetupEditor : Editor
 {
     private enum EditMode { Select, AddNode, Connect }
 
@@ -21,7 +21,7 @@ public class GraphMapSetupEditor : Editor
 
     public override void OnInspectorGUI()
     {
-        var setup = (GraphMapSetup)target;
+        var setup = (LDY_GraphMapSetup)target;
 
         EditorGUILayout.HelpBox(
             "맵은 Scene 뷰에서 편집합니다.\n" +
@@ -60,9 +60,9 @@ public class GraphMapSetupEditor : Editor
         GUI.backgroundColor = Color.white;
     }
 
-    private void DrawSelectedNodeInspector(GraphMapSetup setup)
+    private void DrawSelectedNodeInspector(LDY_GraphMapSetup setup)
     {
-        MapNode node = setup.NodeList[selectedIndex];
+        LDY_MapNode node = setup.NodeList[selectedIndex];
 
         EditorGUILayout.Space();
         EditorGUILayout.LabelField("선택된 노드", EditorStyles.boldLabel);
@@ -93,7 +93,7 @@ public class GraphMapSetupEditor : Editor
             {
                 Undo.RecordObject(setup, "Disconnect Node");
                 string otherId = node.connectedNodeIds[i];
-                MapNode other = setup.NodeList.Find(n => n.id == otherId);
+                LDY_MapNode other = setup.NodeList.Find(n => n.id == otherId);
                 node.connectedNodeIds.RemoveAt(i);
                 other?.connectedNodeIds.Remove(node.id);
                 MarkDirty(setup);
@@ -113,8 +113,8 @@ public class GraphMapSetupEditor : Editor
 
     private void OnSceneGUI()
     {
-        var setup = (GraphMapSetup)target;
-        List<MapNode> nodeList = setup.NodeList;
+        var setup = (LDY_GraphMapSetup)target;
+        List<LDY_MapNode> nodeList = setup.NodeList;
 
         DrawEdges(nodeList);
         HandleNodeButtons(setup, nodeList);
@@ -122,16 +122,16 @@ public class GraphMapSetupEditor : Editor
         HandleDeleteKey(setup, nodeList);
     }
 
-    private void DrawEdges(List<MapNode> nodeList)
+    private void DrawEdges(List<LDY_MapNode> nodeList)
     {
         var drawn = new HashSet<string>();
         Handles.color = EdgeColor;
 
-        foreach (MapNode node in nodeList)
+        foreach (LDY_MapNode node in nodeList)
         {
             foreach (string neighborId in node.connectedNodeIds)
             {
-                MapNode neighbor = nodeList.Find(n => n.id == neighborId);
+                LDY_MapNode neighbor = nodeList.Find(n => n.id == neighborId);
                 if (neighbor == null)
                     continue;
 
@@ -144,11 +144,11 @@ public class GraphMapSetupEditor : Editor
         }
     }
 
-    private void HandleNodeButtons(GraphMapSetup setup, List<MapNode> nodeList)
+    private void HandleNodeButtons(LDY_GraphMapSetup setup, List<LDY_MapNode> nodeList)
     {
         for (int i = 0; i < nodeList.Count; i++)
         {
-            MapNode node = nodeList[i];
+            LDY_MapNode node = nodeList[i];
             Vector3 pos = node.position;
             float size = HandleUtility.GetHandleSize(pos) * NodeSize;
 
@@ -173,7 +173,7 @@ public class GraphMapSetupEditor : Editor
         }
     }
 
-    private void OnNodeClicked(GraphMapSetup setup, List<MapNode> nodeList, int index)
+    private void OnNodeClicked(LDY_GraphMapSetup setup, List<LDY_MapNode> nodeList, int index)
     {
         switch (mode)
         {
@@ -199,7 +199,7 @@ public class GraphMapSetupEditor : Editor
         Repaint();
     }
 
-    private void HandleAddNodeClick(GraphMapSetup setup, List<MapNode> nodeList)
+    private void HandleAddNodeClick(LDY_GraphMapSetup setup, List<LDY_MapNode> nodeList)
     {
         if (mode != EditMode.AddNode)
             return;
@@ -211,7 +211,7 @@ public class GraphMapSetupEditor : Editor
         Vector2 worldPos = GetMouseWorldPosition(e.mousePosition);
 
         Undo.RecordObject(setup, "Add Node");
-        nodeList.Add(new MapNode
+        nodeList.Add(new LDY_MapNode
         {
             id = GenerateUniqueId(nodeList),
             position = worldPos,
@@ -223,7 +223,7 @@ public class GraphMapSetupEditor : Editor
         e.Use();
     }
 
-    private void HandleDeleteKey(GraphMapSetup setup, List<MapNode> nodeList)
+    private void HandleDeleteKey(LDY_GraphMapSetup setup, List<LDY_MapNode> nodeList)
     {
         Event e = Event.current;
         if (e.type != EventType.KeyDown)
@@ -249,7 +249,7 @@ public class GraphMapSetupEditor : Editor
         return Vector2.zero;
     }
 
-    private string GenerateUniqueId(List<MapNode> nodeList)
+    private string GenerateUniqueId(List<LDY_MapNode> nodeList)
     {
         int i = nodeList.Count;
         string id;
@@ -261,16 +261,16 @@ public class GraphMapSetupEditor : Editor
         return id;
     }
 
-    private void RenameNode(List<MapNode> nodeList, MapNode node, string newId)
+    private void RenameNode(List<LDY_MapNode> nodeList, LDY_MapNode node, string newId)
     {
         if (string.IsNullOrEmpty(newId) || nodeList.Exists(n => n != node && n.id == newId))
         {
-            Debug.LogWarning($"[GraphMapSetup] id '{newId}' 는 비어있거나 이미 존재해서 변경할 수 없습니다.");
+            Debug.LogWarning($"[LDY_GraphMapSetup] id '{newId}' 는 비어있거나 이미 존재해서 변경할 수 없습니다.");
             return;
         }
 
         string oldId = node.id;
-        foreach (MapNode n in nodeList)
+        foreach (LDY_MapNode n in nodeList)
         {
             int idx = n.connectedNodeIds.IndexOf(oldId);
             if (idx >= 0)
@@ -279,7 +279,7 @@ public class GraphMapSetupEditor : Editor
         node.id = newId;
     }
 
-    private void ToggleConnection(MapNode a, MapNode b)
+    private void ToggleConnection(LDY_MapNode a, LDY_MapNode b)
     {
         if (a.connectedNodeIds.Contains(b.id))
         {
@@ -293,15 +293,15 @@ public class GraphMapSetupEditor : Editor
         }
     }
 
-    private void RemoveNode(List<MapNode> nodeList, int index)
+    private void RemoveNode(List<LDY_MapNode> nodeList, int index)
     {
-        MapNode target = nodeList[index];
-        foreach (MapNode n in nodeList)
+        LDY_MapNode target = nodeList[index];
+        foreach (LDY_MapNode n in nodeList)
             n.connectedNodeIds.Remove(target.id);
         nodeList.RemoveAt(index);
     }
 
-    private void MarkDirty(GraphMapSetup setup)
+    private void MarkDirty(LDY_GraphMapSetup setup)
     {
         EditorUtility.SetDirty(setup);
         if (!Application.isPlaying)
