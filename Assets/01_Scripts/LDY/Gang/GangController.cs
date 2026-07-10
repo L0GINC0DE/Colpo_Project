@@ -45,13 +45,18 @@ public class GangController : MonoBehaviour
         if (string.IsNullOrEmpty(spawnNodeId))
             spawnNodeId = gangData.currentNodeId;
 
-        // ScriptableObject라 이전 Play 세션 값이 남아있을 수 있어서 시작할 때 강제로 초기화.
-        gangData.currentNodeId = spawnNodeId;
+        // ScriptableObject라 이전 Play 세션 값이 남아있을 수 있어서 기본은 스폰 위치로 초기화.
+        // 다만 세이브 파일에 이 갱단 위치가 저장돼 있으면(나갔다 다시 들어온 경우) 그걸 우선한다.
+        string startNodeId = spawnNodeId;
+        if (SaveManager.Instance != null && SaveManager.Instance.TryGetSavedGangNodeId(gangData.gangName, out string savedNodeId))
+            startNodeId = savedNodeId;
+
+        gangData.currentNodeId = startNodeId;
         gangData.currentFunds = gangData.maxFunds;
         gangData.hackLockedUntilTurn = 0;
         initialDamageResistance = gangData.damageResistance;
 
-        if (GraphMapSetup.Instance != null && GraphMapSetup.Instance.Nodes.TryGetValue(spawnNodeId, out MapNode node))
+        if (GraphMapSetup.Instance != null && GraphMapSetup.Instance.Nodes.TryGetValue(startNodeId, out MapNode node))
             transform.position = node.position;
 
         MapVisualFactory.CreateMarker($"GangVisual_{gangData.gangName}", transform, transform.position, 0.7f, GetGangColor(gangData.type), keepCollider: true);

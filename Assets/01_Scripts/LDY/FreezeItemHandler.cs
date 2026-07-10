@@ -1,7 +1,7 @@
 using UnityEngine;
 using UnityEngine.InputSystem;
 
-// 얼리기 아이템. F로 조준 모드를 켜면(커서가 얼음 모양으로 바뀜)
+// 얼리기 아이템. S로 조준 모드를 켜면(커서가 얼음 모양으로 바뀜)
 // 다음 좌클릭에 맞은 갱단을 freezeDuration턴 얼린다.
 [RequireComponent(typeof(Camera))]
 public class FreezeItemHandler : MonoBehaviour
@@ -46,7 +46,7 @@ public class FreezeItemHandler : MonoBehaviour
     private void Update()
     {
         Keyboard keyboard = Keyboard.current;
-        if (keyboard != null && keyboard.fKey.wasPressedThisFrame)
+        if (keyboard != null && keyboard.sKey.wasPressedThisFrame)
             ToggleArmed();
 
         if (!armed)
@@ -71,7 +71,8 @@ public class FreezeItemHandler : MonoBehaviour
         Disarm();
     }
 
-    private void ToggleArmed()
+    // UI 버튼(SkillMenu)의 OnClick과 키보드(S) 양쪽에서 호출.
+    public void ToggleArmed()
     {
         if (armed)
         {
@@ -91,16 +92,18 @@ public class FreezeItemHandler : MonoBehaviour
             PathRedirectHandler.Instance.Disarm();
         if (NoiseItemHandler.Instance != null)
             NoiseItemHandler.Instance.Disarm();
+        if (AttackSkillItemHandler.Instance != null)
+            AttackSkillItemHandler.Instance.Disarm();
 
         armed = true;
         if (atmClickHandler != null)
             atmClickHandler.enabled = false;
 
         Cursor.SetCursor(cursorTexture, new Vector2(cursorTexture.width, cursorTexture.height) * 0.5f, CursorMode.Auto);
-        Debug.Log("[FreezeItemHandler] 얼리기 조준 모드 - 갱단을 좌클릭하세요 (다시 F를 누르면 취소)");
+        Debug.Log("[FreezeItemHandler] 얼리기 조준 모드 - 갱단을 좌클릭하세요 (다시 S를 누르면 취소)");
     }
 
-    // 다른 아이템(B: 벽)이 조준 모드를 켤 때 이쪽을 취소시킬 수 있도록 공개해둔다.
+    // 다른 아이템(A: 벽)이 조준 모드를 켤 때 이쪽을 취소시킬 수 있도록 공개해둔다.
     public void Disarm()
     {
         if (!armed)

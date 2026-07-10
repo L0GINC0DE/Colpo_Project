@@ -2,9 +2,9 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
-// [테스트/플레이어 조작] 추적 경로 재탐색. P로 조준 모드를 켜고, 먼저 추적 중인 갱단을 좌클릭해서
+// 추적 경로 재탐색. F로 조준 모드를 켜고, 먼저 추적 중인 갱단을 좌클릭해서
 // 고른 다음, 인접한 노드를 순서대로 좌클릭해서 강제 경로를 그린다(뒤로 가거나 이미 지나온
-// 노드로는 못 감 - 무조건 앞으로만). 경로를 그리다가 다시 P를 누르면 지금까지 그린 경로를
+// 노드로는 못 감 - 무조건 앞으로만). 경로를 그리다가 다시 F를 누르면 지금까지 그린 경로를
 // 확정해서 그 갱단에게 적용한다. 사이 안 좋은 갱단끼리 같은 자리로 몰아넣는 용도로 쓴다.
 [RequireComponent(typeof(Camera))]
 public class PathRedirectHandler : MonoBehaviour
@@ -42,13 +42,8 @@ public class PathRedirectHandler : MonoBehaviour
     private void Update()
     {
         Keyboard keyboard = Keyboard.current;
-        if (keyboard != null && keyboard.pKey.wasPressedThisFrame)
-        {
-            if (armed)
-                Confirm();
-            else
-                Arm();
-        }
+        if (keyboard != null && keyboard.fKey.wasPressedThisFrame)
+            OnButtonPressed();
 
         if (!armed)
             return;
@@ -81,7 +76,7 @@ public class PathRedirectHandler : MonoBehaviour
 
         selectedGang = controller;
         pathBuilder = new List<string> { controller.gangData.currentNodeId };
-        Debug.Log($"[PathRedirectHandler] {controller.gangData.gangName} 선택 - 이어질 노드를 좌클릭하세요 (P로 확정)");
+        Debug.Log($"[PathRedirectHandler] {controller.gangData.gangName} 선택 - 이어질 노드를 좌클릭하세요 (F로 확정)");
     }
 
     private void TryExtendPath(RaycastHit hit)
@@ -107,6 +102,15 @@ public class PathRedirectHandler : MonoBehaviour
         UpdatePreviewLine();
     }
 
+    // UI 버튼(SkillMenu)의 OnClick과 키보드(F) 양쪽에서 호출 - armed면 확정, 아니면 조준 시작.
+    public void OnButtonPressed()
+    {
+        if (armed)
+            Confirm();
+        else
+            Arm();
+    }
+
     private void Arm()
     {
         if (charges <= 0)
@@ -121,6 +125,8 @@ public class PathRedirectHandler : MonoBehaviour
             WallItemHandler.Instance.Disarm();
         if (NoiseItemHandler.Instance != null)
             NoiseItemHandler.Instance.Disarm();
+        if (AttackSkillItemHandler.Instance != null)
+            AttackSkillItemHandler.Instance.Disarm();
 
         armed = true;
         selectedGang = null;
@@ -129,7 +135,7 @@ public class PathRedirectHandler : MonoBehaviour
             atmClickHandler.enabled = false;
 
         Cursor.SetCursor(cursorTexture, new Vector2(cursorTexture.width, cursorTexture.height) * 0.5f, CursorMode.Auto);
-        Debug.Log("[PathRedirectHandler] 경로 재지정 모드 - 추적 중인 갱단을 좌클릭하세요 (P를 다시 누르면 취소/확정)");
+        Debug.Log("[PathRedirectHandler] 경로 재지정 모드 - 추적 중인 갱단을 좌클릭하세요 (F를 다시 누르면 취소/확정)");
     }
 
     private void Confirm()
@@ -148,7 +154,7 @@ public class PathRedirectHandler : MonoBehaviour
         Disarm();
     }
 
-    // 다른 아이템(F: 얼리기, B: 벽)이 조준 모드를 켤 때 이쪽을 취소시킬 수 있도록 공개해둔다.
+    // 다른 아이템(S: 얼리기, A: 벽)이 조준 모드를 켤 때 이쪽을 취소시킬 수 있도록 공개해둔다.
     public void Disarm()
     {
         armed = false;

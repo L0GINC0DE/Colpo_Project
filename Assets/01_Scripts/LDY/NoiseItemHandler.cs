@@ -1,7 +1,7 @@
 using UnityEngine;
 using UnityEngine.InputSystem;
 
-// 노이즈 아이템. Z로 조준 모드를 켜면(커서가 회색 지그재그 모양으로 바뀜) 다음 좌클릭에
+// 노이즈 아이템. D로 조준 모드를 켜면(커서가 회색 지그재그 모양으로 바뀜) 다음 좌클릭에
 // 맞은 갱단의 시너지/부조화 상성 효과를 noiseDuration턴 동안 무효화한다.
 [RequireComponent(typeof(Camera))]
 public class NoiseItemHandler : MonoBehaviour
@@ -36,7 +36,7 @@ public class NoiseItemHandler : MonoBehaviour
     private void Update()
     {
         Keyboard keyboard = Keyboard.current;
-        if (keyboard != null && keyboard.zKey.wasPressedThisFrame)
+        if (keyboard != null && keyboard.dKey.wasPressedThisFrame)
             ToggleArmed();
 
         if (!armed)
@@ -61,7 +61,8 @@ public class NoiseItemHandler : MonoBehaviour
         Disarm();
     }
 
-    private void ToggleArmed()
+    // UI 버튼(SkillMenu)의 OnClick과 키보드(D) 양쪽에서 호출.
+    public void ToggleArmed()
     {
         if (armed)
         {
@@ -81,16 +82,18 @@ public class NoiseItemHandler : MonoBehaviour
             WallItemHandler.Instance.Disarm();
         if (PathRedirectHandler.Instance != null)
             PathRedirectHandler.Instance.Disarm();
+        if (AttackSkillItemHandler.Instance != null)
+            AttackSkillItemHandler.Instance.Disarm();
 
         armed = true;
         if (atmClickHandler != null)
             atmClickHandler.enabled = false;
 
         Cursor.SetCursor(cursorTexture, new Vector2(cursorTexture.width, cursorTexture.height) * 0.5f, CursorMode.Auto);
-        Debug.Log("[NoiseItemHandler] 노이즈 조준 모드 - 갱단을 좌클릭하세요 (다시 Z를 누르면 취소)");
+        Debug.Log("[NoiseItemHandler] 노이즈 조준 모드 - 갱단을 좌클릭하세요 (다시 D를 누르면 취소)");
     }
 
-    // 다른 아이템(F/B/P)이 조준 모드를 켤 때 이쪽을 취소시킬 수 있도록 공개해둔다.
+    // 다른 아이템(S/A/F)이 조준 모드를 켤 때 이쪽을 취소시킬 수 있도록 공개해둔다.
     public void Disarm()
     {
         if (!armed)
