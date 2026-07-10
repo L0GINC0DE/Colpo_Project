@@ -118,7 +118,7 @@ public class LSO_ColpoUI : MonoBehaviour
         fullscreenMaterial.DOFloat(originalRedTransparent, "_Transparent", 0.2f).SetEase(Ease.OutQuad).SetLoops(2, LoopType.Yoyo);
     }
 
-    private void ResultEffect(LSO_ColpoManager.ColpoResultType result, int current, GangType gangType)
+    private void ResultEffect(LSO_ColpoManager.ColpoResultType result, int current, LDY_GangType gangType)
     {
         DOTween.Kill(fullscreenMaterial);
         fullscreenMaterial.SetFloat(Transparent, 0f);

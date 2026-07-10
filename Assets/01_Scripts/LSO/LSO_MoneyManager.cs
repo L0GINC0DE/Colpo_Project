@@ -51,7 +51,7 @@ public class LSO_MoneyManager : MonoBehaviour
       moneyText.text = Money.ToString();
    }
 
-   public void AddMoney(LSO_ColpoManager.ColpoResultType result, int value, GangType gangType)
+   public void AddMoney(LSO_ColpoManager.ColpoResultType result, int value, LDY_GangType gangType)
    {
       Debug.Log($"{gangType} 갱으로 부터  {result}을/를 해 {value}달러만큼 털어왔습니다");
       
