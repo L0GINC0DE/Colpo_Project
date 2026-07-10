@@ -1,9 +1,9 @@
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
 [RequireComponent(typeof(Camera))]
-public class MapCameraController : MonoBehaviour
+public class LDY_MapCameraController : MonoBehaviour
 {
     [SerializeField] private float moveSpeed = 10f;
     [SerializeField] private float zoomSpeed = 3f;
@@ -36,17 +36,17 @@ public class MapCameraController : MonoBehaviour
         if (boundsReady)
             return;
 
-        if (GraphMapSetup.Instance == null)
+        if (LDY_GraphMapSetup.Instance == null)
             return;
 
-        List<MapNode> nodeList = GraphMapSetup.Instance.NodeList;
+        List<LDY_MapNode> nodeList = LDY_GraphMapSetup.Instance.NodeList;
         if (nodeList == null || nodeList.Count == 0)
             return;
 
         minX = maxX = nodeList[0].position.x;
         minY = maxY = nodeList[0].position.y;
 
-        foreach (MapNode node in nodeList)
+        foreach (LDY_MapNode node in nodeList)
         {
             minX = Mathf.Min(minX, node.position.x);
             maxX = Mathf.Max(maxX, node.position.x);

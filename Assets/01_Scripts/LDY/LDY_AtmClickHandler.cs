@@ -1,8 +1,8 @@
-using UnityEngine;
+﻿using UnityEngine;
 using UnityEngine.InputSystem;
 
 [RequireComponent(typeof(Camera))]
-public class AtmClickHandler : MonoBehaviour
+public class LDY_AtmClickHandler : MonoBehaviour
 {
     [SerializeField] private int stealAmount = 300;
 
@@ -23,20 +23,20 @@ public class AtmClickHandler : MonoBehaviour
         if (!Physics.Raycast(ray, out RaycastHit hit))
             return;
 
-        GangController controller = hit.collider.GetComponentInParent<GangController>();
+        LDY_GangController controller = hit.collider.GetComponentInParent<LDY_GangController>();
         if (controller == null || controller.gangData == null)
             return;
 
-        if (GangManager.Instance == null || TurnManager.Instance == null)
+        if (LDY_GangManager.Instance == null || LDY_TurnManager.Instance == null)
         {
-            Debug.LogWarning("[AtmClickHandler] GangManager/TurnManager.Instance가 아직 없습니다 - 씬 구성을 확인하세요.");
+            Debug.LogWarning("[LDY_AtmClickHandler] LDY_GangManager/LDY_TurnManager.Instance가 아직 없습니다 - 씬 구성을 확인하세요.");
             return;
         }
 
         string gangName = controller.gangData.gangName;
-        Debug.Log($"[AtmClickHandler] {gangName} ATM 털기 - StealFrom({stealAmount}) (턴 소모)");
+        Debug.Log($"[LDY_AtmClickHandler] {gangName} ATM 털기 - StealFrom({stealAmount}) (턴 소모)");
 
         // 갱단창 안의 유료 행동(해킹/털기)이므로 PerformGangWindowAction을 거쳐서 턴을 소모한다.
-        TurnManager.Instance.PerformGangWindowAction(() => GangManager.Instance.StealFrom(gangName, stealAmount));
+        LDY_TurnManager.Instance.PerformGangWindowAction(() => LDY_GangManager.Instance.StealFrom(gangName, stealAmount));
     }
 }

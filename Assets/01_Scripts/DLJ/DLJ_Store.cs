@@ -10,6 +10,8 @@ public class DLJ_Store : MonoBehaviour
     [SerializeField] private TMP_InputField inputField;
     [SerializeField] private string storeID;
 
+    [SerializeField] private string[] skillName;
+    
     [TextArea(0, 15)]
     [SerializeField] private string[] desc;
 
@@ -17,11 +19,7 @@ public class DLJ_Store : MonoBehaviour
     
     private string lockedText;
     private int lockedLength;
-    
-    private void Start()
-    {
-        inputField.onSubmit.AddListener(OnEnter);
-    }
+    private Coroutine showTextCoroutine;
     
     private void Awake()
     {
@@ -32,6 +30,7 @@ public class DLJ_Store : MonoBehaviour
         inputField.stringPosition = lockedLength;
         
         inputField.onValueChanged.AddListener(OnChanged);
+        inputField.onSubmit.AddListener(OnEnter);
         inputField.onSelect.AddListener(_ => MoveCaretToEnd());
     }
 
@@ -73,22 +72,35 @@ public class DLJ_Store : MonoBehaviour
     {
         if (string.Equals(value, storeID, StringComparison.OrdinalIgnoreCase))
         {
-            inputField.text = "";
             lockedLength = 0;
-            lockedText = inputField.text;
-            StartCoroutine(ShowText(desc[index]));
+            lockedText = "";
+            inputField.SetTextWithoutNotify("");
+
+            if (showTextCoroutine != null)
+                StopCoroutine(showTextCoroutine);
+
+            showTextCoroutine = StartCoroutine(ShowText(desc[index]));
             index++;
         }
     }
 
     private IEnumerator ShowText(string value)
     {
-        inputField.text = "";
+        inputField.readOnly = true;
+        inputField.SetTextWithoutNotify("");
 
         foreach (var letter in value)
         {
-            inputField.text += letter;
+            inputField.SetTextWithoutNotify(inputField.text + letter);
             yield return new WaitForSeconds(0.02f);
         }
+
+        lockedText = inputField.text;
+        lockedLength = lockedText.Length;
+        MoveCaretToEnd();
+        inputField.readOnly = false;
+        EventSystem.current?.SetSelectedGameObject(inputField.gameObject);
+        inputField.ActivateInputField();
+        showTextCoroutine = null;
     }
 }

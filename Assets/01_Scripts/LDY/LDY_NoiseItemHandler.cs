@@ -1,19 +1,19 @@
-using UnityEngine;
+﻿using UnityEngine;
 using UnityEngine.InputSystem;
 
 // 노이즈 아이템. D로 조준 모드를 켜면(커서가 회색 지그재그 모양으로 바뀜) 다음 좌클릭에
 // 맞은 갱단의 시너지/부조화 상성 효과를 noiseDuration턴 동안 무효화한다.
 [RequireComponent(typeof(Camera))]
-public class NoiseItemHandler : MonoBehaviour
+public class LDY_NoiseItemHandler : MonoBehaviour
 {
-    public static NoiseItemHandler Instance { get; private set; }
+    public static LDY_NoiseItemHandler Instance { get; private set; }
 
     [SerializeField] private int noiseCharges = 3;
     [SerializeField] private int noiseDuration = 2;
 
     private int initialNoiseCharges;
     private Camera cam;
-    private AtmClickHandler atmClickHandler;
+    private LDY_AtmClickHandler atmClickHandler;
     private Texture2D cursorTexture;
     private bool armed;
 
@@ -21,7 +21,7 @@ public class NoiseItemHandler : MonoBehaviour
     {
         Instance = this;
         cam = GetComponent<Camera>();
-        atmClickHandler = GetComponent<AtmClickHandler>();
+        atmClickHandler = GetComponent<LDY_AtmClickHandler>();
         initialNoiseCharges = noiseCharges;
         cursorTexture = BuildCursorTexture();
     }
@@ -49,12 +49,12 @@ public class NoiseItemHandler : MonoBehaviour
         Ray ray = cam.ScreenPointToRay(mouse.position.ReadValue());
         if (Physics.Raycast(ray, out RaycastHit hit))
         {
-            GangController controller = hit.collider.GetComponentInParent<GangController>();
+            LDY_GangController controller = hit.collider.GetComponentInParent<LDY_GangController>();
             if (controller != null && controller.gangData != null)
             {
-                GangManager.Instance.Noise(controller.gangData.gangName, noiseDuration);
+                LDY_GangManager.Instance.Noise(controller.gangData.gangName, noiseDuration);
                 noiseCharges--;
-                Debug.Log($"[NoiseItemHandler] {controller.gangData.gangName} 노이즈 ({noiseDuration}턴, 남은 개수: {noiseCharges})");
+                Debug.Log($"[LDY_NoiseItemHandler] {controller.gangData.gangName} 노이즈 ({noiseDuration}턴, 남은 개수: {noiseCharges})");
             }
         }
 
@@ -72,25 +72,25 @@ public class NoiseItemHandler : MonoBehaviour
 
         if (noiseCharges <= 0)
         {
-            Debug.Log("[NoiseItemHandler] 노이즈 개수를 다 썼습니다.");
+            Debug.Log("[LDY_NoiseItemHandler] 노이즈 개수를 다 썼습니다.");
             return;
         }
 
-        if (FreezeItemHandler.Instance != null)
-            FreezeItemHandler.Instance.Disarm();
-        if (WallItemHandler.Instance != null)
-            WallItemHandler.Instance.Disarm();
-        if (PathRedirectHandler.Instance != null)
-            PathRedirectHandler.Instance.Disarm();
-        if (AttackSkillItemHandler.Instance != null)
-            AttackSkillItemHandler.Instance.Disarm();
+        if (LDY_FreezeItemHandler.Instance != null)
+            LDY_FreezeItemHandler.Instance.Disarm();
+        if (LDY_WallItemHandler.Instance != null)
+            LDY_WallItemHandler.Instance.Disarm();
+        if (LDY_PathRedirectHandler.Instance != null)
+            LDY_PathRedirectHandler.Instance.Disarm();
+        if (LDY_AttackSkillItemHandler.Instance != null)
+            LDY_AttackSkillItemHandler.Instance.Disarm();
 
         armed = true;
         if (atmClickHandler != null)
             atmClickHandler.enabled = false;
 
         Cursor.SetCursor(cursorTexture, new Vector2(cursorTexture.width, cursorTexture.height) * 0.5f, CursorMode.Auto);
-        Debug.Log("[NoiseItemHandler] 노이즈 조준 모드 - 갱단을 좌클릭하세요 (다시 D를 누르면 취소)");
+        Debug.Log("[LDY_NoiseItemHandler] 노이즈 조준 모드 - 갱단을 좌클릭하세요 (다시 D를 누르면 취소)");
     }
 
     // 다른 아이템(S/A/F)이 조준 모드를 켤 때 이쪽을 취소시킬 수 있도록 공개해둔다.
