@@ -8,23 +8,26 @@ namespace _01_Scripts.LSO
     {
         public static LSO_ColpoManager Instance;
         
+        // 누르기/떼기 이벤트
+        public static event Action OnColpoPointerDown;
+        public static event Action OnColpoPointerUp;
+        
         /// <summary>
         /// 콜포 결과를 알려주는 이벤트
         /// </summary>
-        /// <param name="ColpoResultType">콜포 결과</param>
-        /// <param name="Money">턴 돈 양</param>
-        /// <param name="GangType">갱단 종류</param>
-        public static Action<string, int, string> OnColpoResult;
-        
-        public int ColpoMax{get; private set;}
-        public int ColpoMin{get; private set;}
+        public static Action<ColpoResultType, int, GangType> OnColpoResult;
+
+        public int ColpoMax { get; private set; } = 1000;
+        private int ColpoMin { get; set; } = 0;
         public int ColpoLimit{get; private set;}
+
+        public float ColpoTime { get; private set; } = 0.7f;
         
-        public int ColpoTime{get; private set;}
-        
-        public int ColpoValue{get; private set;}
+        public int Current{get; private set;}
 
         public bool isColpoTime;
+        public bool holding;
+        public bool ColpoTimeEnd;
 
         public enum ColpoResultType
         {
@@ -40,6 +43,19 @@ namespace _01_Scripts.LSO
                 Instance = this;
             }
         }
+        
+        public void HandlePointerDown()
+        {
+            ResetColpo();
+            holding = true;
+            OnColpoPointerDown?.Invoke();
+        }
+
+        public void HandlePointerUp()
+        {
+            holding = false;
+            OnColpoPointerUp?.Invoke();
+        }
 
         public int ColpoMaxUp(int value)
         {
@@ -51,10 +67,15 @@ namespace _01_Scripts.LSO
         public int ResetColpo()
         {
             ColpoLimit = Random.Range(ColpoMin, ColpoMax);
+            Current = 0;
             
             return ColpoLimit;
         }
-        
-        //public int 
+
+        public int CurrentUp()
+        {
+            Current += 1;
+            return Current;
+        }
     }
 }
