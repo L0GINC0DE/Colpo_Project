@@ -1,9 +1,8 @@
 using UnityEngine;
 using UnityEngine.InputSystem;
 
-// [테스트/플레이어 조작] 얼리기 아이템. F로 조준 모드를 켜면(커서가 얼음 모양으로 바뀜)
-// 다음 좌클릭에 맞은 갱단을 freezeDuration턴 얼린다. 조준 중엔 AtmClickHandler(훔치기)를
-// 잠깐 꺼서, 같은 좌클릭에 훔치기와 얼리기가 동시에 발동하지 않게 한다.
+// 얼리기 아이템. S로 조준 모드를 켜면(커서가 얼음 모양으로 바뀜)
+// 다음 좌클릭에 맞은 갱단을 freezeDuration턴 얼린다.
 [RequireComponent(typeof(Camera))]
 public class FreezeItemHandler : MonoBehaviour
 {
@@ -11,6 +10,16 @@ public class FreezeItemHandler : MonoBehaviour
 
     [SerializeField] private int freezeCharges = 3;
     [SerializeField] private int freezeDuration = 1;
+
+    // 얼음 오버레이에 쓸 머티리얼(icePrefab이 비어있을 때만 사용). 이것도 비워두면
+    // GangController가 기본 흰색 Quad로 대신한다.
+    [SerializeField] private Material iceMaterial;
+    public Material IceMaterial => iceMaterial;
+
+    // 직접 만든 얼음 프리팹. 지정돼 있으면 iceMaterial보다 우선해서 그대로 Instantiate하고,
+    // 코드에선 그 프리팹 머티리얼의 _size만 애니메이션한다.
+    [SerializeField] private GameObject icePrefab;
+    public GameObject IcePrefab => icePrefab;
 
     private int initialFreezeCharges;
     private Camera cam;
@@ -37,7 +46,7 @@ public class FreezeItemHandler : MonoBehaviour
     private void Update()
     {
         Keyboard keyboard = Keyboard.current;
-        if (keyboard != null && keyboard.fKey.wasPressedThisFrame)
+        if (keyboard != null && keyboard.sKey.wasPressedThisFrame)
             ToggleArmed();
 
         if (!armed)
@@ -62,7 +71,8 @@ public class FreezeItemHandler : MonoBehaviour
         Disarm();
     }
 
-    private void ToggleArmed()
+    // UI 버튼(SkillMenu)의 OnClick과 키보드(S) 양쪽에서 호출.
+    public void ToggleArmed()
     {
         if (armed)
         {
@@ -76,15 +86,25 @@ public class FreezeItemHandler : MonoBehaviour
             return;
         }
 
+        if (WallItemHandler.Instance != null)
+            WallItemHandler.Instance.Disarm();
+        if (PathRedirectHandler.Instance != null)
+            PathRedirectHandler.Instance.Disarm();
+        if (NoiseItemHandler.Instance != null)
+            NoiseItemHandler.Instance.Disarm();
+        if (AttackSkillItemHandler.Instance != null)
+            AttackSkillItemHandler.Instance.Disarm();
+
         armed = true;
         if (atmClickHandler != null)
             atmClickHandler.enabled = false;
 
         Cursor.SetCursor(cursorTexture, new Vector2(cursorTexture.width, cursorTexture.height) * 0.5f, CursorMode.Auto);
-        Debug.Log("[FreezeItemHandler] 얼리기 조준 모드 - 갱단을 좌클릭하세요 (다시 F를 누르면 취소)");
+        Debug.Log("[FreezeItemHandler] 얼리기 조준 모드 - 갱단을 좌클릭하세요 (다시 S를 누르면 취소)");
     }
 
-    private void Disarm()
+    // 다른 아이템(A: 벽)이 조준 모드를 켤 때 이쪽을 취소시킬 수 있도록 공개해둔다.
+    public void Disarm()
     {
         if (!armed)
             return;
