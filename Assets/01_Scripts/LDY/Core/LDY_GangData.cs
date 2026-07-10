@@ -1,17 +1,17 @@
-using UnityEngine;
+﻿using UnityEngine;
 using UnityEngine.Serialization;
 
 [CreateAssetMenu(fileName = "NewGangData", menuName = "Colpo/Gang Data")]
-public class GangData : ScriptableObject
+public class LDY_GangData : ScriptableObject
 {
     [Header("기본 정보")]
     public string gangName;
-    public GangType type;
+    public LDY_GangType type;
 
     // 평상시 위험도. 실제 조회는 GetEffectiveRiskLevel()을 거칠 것 - 직접 읽으면
     // 시너지로 인한 위험도 상승이 반영 안 된다.
     [FormerlySerializedAs("riskLevel")] 
-    public RiskLevel baseRiskLevel;
+    public LDY_RiskLevel baseRiskLevel;
 
     // 위험도가 시너지랑 무관하게 고정인 갱단이면 체크.
     public bool isRiskFixed;
@@ -27,7 +27,7 @@ public class GangData : ScriptableObject
     [Range(0f, 1f)]
     public float damageResistance;
 
-    // 왕귀파(Scale) 전용: 10턴마다 이만큼씩 피해 저항이 증가한다(GangController.UpdateResistance에서 사용).
+    // 왕귀파(Scale) 전용: 10턴마다 이만큼씩 피해 저항이 증가한다(LDY_GangController.UpdateResistance에서 사용).
     public float resistanceGainPerTenTurns = 0.5f;
 
     [Header("Colpo 결과 상태")]
@@ -39,10 +39,10 @@ public class GangData : ScriptableObject
     public int maxChaseDistanceByRisk = 5;
 
     // 고정이면 baseRiskLevel 그대로, 아니면 시너지 활성화 중엔 High로 취급.
-    public RiskLevel GetEffectiveRiskLevel(bool synergyActive)
+    public LDY_RiskLevel GetEffectiveRiskLevel(bool synergyActive)
     {
         if (isRiskFixed)
             return baseRiskLevel;
-        return synergyActive ? RiskLevel.High : baseRiskLevel;
+        return synergyActive ? LDY_RiskLevel.High : baseRiskLevel;
     }
 }

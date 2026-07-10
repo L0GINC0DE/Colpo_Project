@@ -1,10 +1,10 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class TurnManager : MonoBehaviour
+public class LDY_TurnManager : MonoBehaviour
 {
-    public static TurnManager Instance { get; private set; }
+    public static LDY_TurnManager Instance { get; private set; }
 
     public int currentTurn = 0;
     public int maxTurn = 30;
@@ -33,55 +33,55 @@ public class TurnManager : MonoBehaviour
 
     private void OnEnable()
     {
-        GameEvents.OnGangReachedBase += HandleGangReachedBase;
-        GameEvents.OnAllGangsDefeated += HandleAllGangsDefeated;
+        LDY_GameEvents.OnGangReachedBase += HandleGangReachedBase;
+        LDY_GameEvents.OnAllGangsDefeated += HandleAllGangsDefeated;
     }
 
     private void OnDisable()
     {
-        GameEvents.OnGangReachedBase -= HandleGangReachedBase;
-        GameEvents.OnAllGangsDefeated -= HandleAllGangsDefeated;
+        LDY_GameEvents.OnGangReachedBase -= HandleGangReachedBase;
+        LDY_GameEvents.OnAllGangsDefeated -= HandleAllGangsDefeated;
     }
 
     public void AdvanceTurn()
     {
         if (isGameOver)
         {
-            Debug.LogWarning("[TurnManager] 게임이 이미 종료되어 턴을 진행하지 않습니다.");
+            Debug.LogWarning("[LDY_TurnManager] 게임이 이미 종료되어 턴을 진행하지 않습니다.");
             return;
         }
 
         currentTurn++;
 
         // 1) 이동 처리 전에 만료된 벽/임시 길부터 정리해야 갱단이 그 턴에 바로 반영된 경로를 탄다.
-        MapStateManager.Instance.RemoveExpired(currentTurn);
+        LDY_MapStateManager.Instance.RemoveExpired(currentTurn);
 
-        List<GangController> controllers = GangManager.Instance.GetAllGangControllers();
+        List<LDY_GangController> controllers = LDY_GangManager.Instance.GetAllGangControllers();
 
         // 2) 추적 여부와 무관하게 모든 갱단의 피해 둔감도 갱신(왕귀파는 턴이 지날수록 단단해짐)과
         //    노이즈 지속 턴 감소를 처리한다.
-        foreach (GangController controller in controllers)
+        foreach (LDY_GangController controller in controllers)
         {
             controller.UpdateResistance(currentTurn);
             controller.TickNoise();
         }
 
         // 3) 추적 중(pursuing)인 갱단만 이동 처리.
-        AStarPathfinder pathfinder = GraphMapSetup.Instance.Pathfinder;
-        foreach (GangController controller in controllers)
+        LDY_AStarPathfinder pathfinder = LDY_GraphMapSetup.Instance.Pathfinder;
+        foreach (LDY_GangController controller in controllers)
         {
             if (controller.pursuing)
-                controller.ProcessTurn(currentTurn, pathfinder, MapStateManager.Instance.IsEdgeBlocked);
+                controller.ProcessTurn(currentTurn, pathfinder, LDY_MapStateManager.Instance.IsEdgeBlocked);
         }
 
         // 4) 얼음은 이동 처리가 끝난 "뒤에" 줄여야 한다. 먼저 줄이면 1턴 얼려도 카운트가 바로 0이
         //    되면서 그 턴에 곧장 움직여버린다(방금 겪은 버그) - 이동 여부와 무관하게 전부 처리해서
         //    추적 중이 아닌 갱단도 얼음이 영원히 안 풀리는 일이 없게 한다.
-        foreach (GangController controller in controllers)
+        foreach (LDY_GangController controller in controllers)
             controller.TickFreeze();
 
-        GameEvents.TurnAdvanced(currentTurn);
-        Debug.Log($"[TurnManager] {currentTurn}번째 턴 진행");
+        LDY_GameEvents.TurnAdvanced(currentTurn);
+        Debug.Log($"[LDY_TurnManager] {currentTurn}번째 턴 진행");
 
         // 5) 종료 조건 체크 (갱단의 기지 도달은 HandleGangReachedBase에서 별도 처리됨).
         if (currentTurn >= maxTurn && !isGameOver)
@@ -108,24 +108,24 @@ public class TurnManager : MonoBehaviour
         currentTurn = 0;
         isGameOver = false;
 
-        foreach (GangController controller in GangManager.Instance.GetAllGangControllers())
+        foreach (LDY_GangController controller in LDY_GangManager.Instance.GetAllGangControllers())
             controller.ResetToStart();
 
-        MapStateManager.Instance.ResetState();
-        GraphMapSetup.Instance.ResetVisuals();
+        LDY_MapStateManager.Instance.ResetState();
+        LDY_GraphMapSetup.Instance.ResetVisuals();
 
-        if (WallItemHandler.Instance != null)
-            WallItemHandler.Instance.ResetCharges();
+        if (LDY_WallItemHandler.Instance != null)
+            LDY_WallItemHandler.Instance.ResetCharges();
 
-        if (FreezeItemHandler.Instance != null)
-            FreezeItemHandler.Instance.ResetCharges();
+        if (LDY_FreezeItemHandler.Instance != null)
+            LDY_FreezeItemHandler.Instance.ResetCharges();
 
-        if (PathRedirectHandler.Instance != null)
-            PathRedirectHandler.Instance.ResetCharges();
+        if (LDY_PathRedirectHandler.Instance != null)
+            LDY_PathRedirectHandler.Instance.ResetCharges();
 
-        if (NoiseItemHandler.Instance != null)
-            NoiseItemHandler.Instance.ResetCharges();
+        if (LDY_NoiseItemHandler.Instance != null)
+            LDY_NoiseItemHandler.Instance.ResetCharges();
 
-        Debug.Log("[TurnManager] 게임 리스타트 - 모든 상태를 초기화했습니다.");
+        Debug.Log("[LDY_TurnManager] 게임 리스타트 - 모든 상태를 초기화했습니다.");
     }
 }

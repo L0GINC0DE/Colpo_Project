@@ -1,4 +1,4 @@
-public enum RiskLevel
+﻿public enum LDY_RiskLevel
 {
     Low,
     Mid,

@@ -5,14 +5,14 @@ using UnityEngine;
 
 // 갱단 하나의 저장 위치. JsonUtility가 Dictionary를 직렬화하지 못해서 리스트로 대신 담는다.
 [Serializable]
-public class GangSaveEntry
+public class LDY_GangSaveEntry
 {
     public string gangName;
     public string nodeId;
 }
 
 [Serializable]
-public class SaveData
+public class LDY_SaveData
 {
     public int IceItem       = 0;
     public int WallItem           = 0;
@@ -22,7 +22,7 @@ public class SaveData
 
     public string mapProgress;
 
-    public List<GangSaveEntry> gangPositions = new List<GangSaveEntry>();
+    public List<LDY_GangSaveEntry> gangPositions = new List<LDY_GangSaveEntry>();
 
     public int ScaleHigh = 0;
     
@@ -30,22 +30,22 @@ public class SaveData
 
 
 [DefaultExecutionOrder(-100)] 
-public class SaveManager : MonoBehaviour
+public class LDY_SaveManager : MonoBehaviour
 {
-    public static SaveManager Instance { get; private set; }
+    public static LDY_SaveManager Instance { get; private set; }
 
     const string SAVE_FILE = "save.json";
 
     string SavePath => Path.Combine(Application.persistentDataPath, SAVE_FILE);
 
-    public SaveData Data { get; private set; } = new SaveData();
+    public LDY_SaveData Data { get; private set; } = new LDY_SaveData();
 
     [UnityEngine.RuntimeInitializeOnLoadMethod(UnityEngine.RuntimeInitializeLoadType.BeforeSceneLoad)]
     static void CreatePersistentInstance()
     {
-        var go = new GameObject("[SaveManager]");
+        var go = new GameObject("[LDY_SaveManager]");
         DontDestroyOnLoad(go);
-        go.AddComponent<SaveManager>(); 
+        go.AddComponent<LDY_SaveManager>(); 
     }
 
     void Awake()
@@ -73,7 +73,7 @@ public class SaveManager : MonoBehaviour
         }
         catch (Exception e)
         {
-            Debug.LogError($"[SaveManager] 저장 실패: {e.Message}");
+            Debug.LogError($"[LDY_SaveManager] 저장 실패: {e.Message}");
         }
     }
 
@@ -82,16 +82,16 @@ public class SaveManager : MonoBehaviour
     // 마지막으로 저장돼 있던 위치를 그대로 둔다.
     private void SaveGangPositions()
     {
-        if (GangManager.Instance == null)
+        if (LDY_GangManager.Instance == null)
             return;
 
         Data.gangPositions.Clear();
-        foreach (GangController controller in GangManager.Instance.GetAllGangControllers())
+        foreach (LDY_GangController controller in LDY_GangManager.Instance.GetAllGangControllers())
         {
             if (controller.gangData == null)
                 continue;
 
-            Data.gangPositions.Add(new GangSaveEntry
+            Data.gangPositions.Add(new LDY_GangSaveEntry
             {
                 gangName = controller.gangData.gangName,
                 nodeId = controller.gangData.currentNodeId
@@ -99,10 +99,10 @@ public class SaveManager : MonoBehaviour
         }
     }
 
-    // 갱단이 스폰될 때(GangController.Start) 저장된 위치가 있으면 그걸 돌려준다.
+    // 갱단이 스폰될 때(LDY_GangController.Start) 저장된 위치가 있으면 그걸 돌려준다.
     public bool TryGetSavedGangNodeId(string gangName, out string nodeId)
     {
-        foreach (GangSaveEntry entry in Data.gangPositions)
+        foreach (LDY_GangSaveEntry entry in Data.gangPositions)
         {
             if (entry.gangName == gangName)
             {
@@ -119,30 +119,30 @@ public class SaveManager : MonoBehaviour
     {
         if (!File.Exists(SavePath))
         {
-            Data = new SaveData();
+            Data = new LDY_SaveData();
             return;
         }
 
         try
         {
             string json = File.ReadAllText(SavePath);
-            Data = JsonUtility.FromJson<SaveData>(json) ?? new SaveData();
+            Data = JsonUtility.FromJson<LDY_SaveData>(json) ?? new LDY_SaveData();
             // 예전 세이브 파일엔 gangPositions가 없을 수 있어서(구버전 호환) null이면 채워준다.
             if (Data.gangPositions == null)
-                Data.gangPositions = new List<GangSaveEntry>();
+                Data.gangPositions = new List<LDY_GangSaveEntry>();
         }
         catch (Exception e)
         {
-            Debug.LogWarning($"[SaveManager] 불러오기 실패 – 초기화 진행: {e.Message}");
-            Data = new SaveData();
+            Debug.LogWarning($"[LDY_SaveManager] 불러오기 실패 – 초기화 진행: {e.Message}");
+            Data = new LDY_SaveData();
         }
     }
 
     public void DeleteSave()
     {
         if (File.Exists(SavePath)) File.Delete(SavePath);
-        Data = new SaveData();
-        Debug.Log("[SaveManager] 저장 데이터 초기화 완료.");
+        Data = new LDY_SaveData();
+        Debug.Log("[LDY_SaveManager] 저장 데이터 초기화 완료.");
     }
 
     public void SetMapProgress(string progressKey)

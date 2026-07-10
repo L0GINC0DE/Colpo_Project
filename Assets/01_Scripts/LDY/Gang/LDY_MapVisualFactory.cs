@@ -1,6 +1,6 @@
-using UnityEngine;
+﻿using UnityEngine;
 
-public static class MapVisualFactory
+public static class LDY_MapVisualFactory
 {
     private static Shader cachedShader;
 
@@ -53,7 +53,7 @@ public static class MapVisualFactory
         return line;
     }
 
-    // nodeAId/nodeBId를 넘기면 클릭 가능한 콜라이더(+EdgeMarker)도 같이 만들어준다.
+    // nodeAId/nodeBId를 넘기면 클릭 가능한 콜라이더(+LDY_EdgeMarker)도 같이 만들어준다.
     // 벽 아이템처럼 "이 길을 클릭해서 고른다"가 필요한 경우에만 사용.
     public static LineRenderer CreateClickableEdgeLine(string name, Transform parent, Vector3 worldA, Vector3 worldB, float width, Color color, string nodeAId, string nodeBId)
     {
@@ -69,7 +69,7 @@ public static class MapVisualFactory
         BoxCollider box = colliderGo.AddComponent<BoxCollider>();
         box.size = new Vector3(diff.magnitude, Mathf.Max(width * 4f, 0.3f), 0.3f);
 
-        EdgeMarker marker = colliderGo.AddComponent<EdgeMarker>();
+        LDY_EdgeMarker marker = colliderGo.AddComponent<LDY_EdgeMarker>();
         marker.nodeAId = nodeAId;
         marker.nodeBId = nodeBId;
 

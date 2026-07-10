@@ -13,7 +13,7 @@ namespace _01_Scripts.LSO
         /// </summary>
         /// <param name="ColpoResultType">콜포 결과</param>
         /// <param name="Money">턴 돈 양</param>
-        /// <param name="GangType">갱단 종류</param>
+        /// <param name="LDY_GangType">갱단 종류</param>
         public static Action<string, int, string> OnColpoResult;
         
         public int ColpoMax{get; private set;}

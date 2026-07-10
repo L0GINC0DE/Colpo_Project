@@ -1,9 +1,9 @@
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using UnityEngine;
 
-public class MapStateManager : MonoBehaviour
+public class LDY_MapStateManager : MonoBehaviour
 {
-    public static MapStateManager Instance { get; private set; }
+    public static LDY_MapStateManager Instance { get; private set; }
 
     // 벽 정보. a-b 사이 간선을 expireTurn까지 막는다.
     private class BlockedEdge
@@ -25,7 +25,7 @@ public class MapStateManager : MonoBehaviour
     private readonly List<BlockedEdge> blockedEdges = new List<BlockedEdge>();
     private readonly List<TemporaryEdge> temporaryEdges = new List<TemporaryEdge>();
 
-    private Dictionary<string, MapNode> nodes;
+    private Dictionary<string, LDY_MapNode> nodes;
 
     private void Awake()
     {
@@ -39,15 +39,15 @@ public class MapStateManager : MonoBehaviour
 
     private void OnEnable()
     {
-        GameEvents.OnSkillUsed += HandleSkillUsed;
+        LDY_GameEvents.OnSkillUsed += HandleSkillUsed;
     }
 
     private void OnDisable()
     {
-        GameEvents.OnSkillUsed -= HandleSkillUsed;
+        LDY_GameEvents.OnSkillUsed -= HandleSkillUsed;
     }
 
-    public void SetNodes(Dictionary<string, MapNode> nodeMap)
+    public void SetNodes(Dictionary<string, LDY_MapNode> nodeMap)
     {
         nodes = nodeMap;
     }
@@ -55,8 +55,8 @@ public class MapStateManager : MonoBehaviour
     public void BlockEdge(string a, string b, int currentTurn, int durationTurns)
     {
         blockedEdges.Add(new BlockedEdge { nodeA = a, nodeB = b, expireTurn = currentTurn + durationTurns });
-        if (GraphMapSetup.Instance != null)
-            GraphMapSetup.Instance.SetWallVisual(a, b, true);
+        if (LDY_GraphMapSetup.Instance != null)
+            LDY_GraphMapSetup.Instance.SetWallVisual(a, b, true);
         Debug.Log($"[MapState] 간선 차단: {a} - {b} (턴 {currentTurn + durationTurns}까지)");
     }
 
@@ -66,9 +66,9 @@ public class MapStateManager : MonoBehaviour
 
         if (nodes != null)
         {
-            if (nodes.TryGetValue(a, out MapNode nodeA) && !nodeA.connectedNodeIds.Contains(b))
+            if (nodes.TryGetValue(a, out LDY_MapNode nodeA) && !nodeA.connectedNodeIds.Contains(b))
                 nodeA.connectedNodeIds.Add(b);
-            if (nodes.TryGetValue(b, out MapNode nodeB) && !nodeB.connectedNodeIds.Contains(a))
+            if (nodes.TryGetValue(b, out LDY_MapNode nodeB) && !nodeB.connectedNodeIds.Contains(a))
                 nodeB.connectedNodeIds.Add(a);
         }
 
@@ -80,8 +80,8 @@ public class MapStateManager : MonoBehaviour
     {
         foreach (BlockedEdge edge in blockedEdges)
         {
-            if (GraphMapSetup.Instance != null)
-                GraphMapSetup.Instance.SetWallVisual(edge.nodeA, edge.nodeB, false);
+            if (LDY_GraphMapSetup.Instance != null)
+                LDY_GraphMapSetup.Instance.SetWallVisual(edge.nodeA, edge.nodeB, false);
         }
         blockedEdges.Clear();
 
@@ -89,9 +89,9 @@ public class MapStateManager : MonoBehaviour
         {
             foreach (TemporaryEdge edge in temporaryEdges)
             {
-                if (nodes.TryGetValue(edge.nodeA, out MapNode nodeA))
+                if (nodes.TryGetValue(edge.nodeA, out LDY_MapNode nodeA))
                     nodeA.connectedNodeIds.Remove(edge.nodeB);
-                if (nodes.TryGetValue(edge.nodeB, out MapNode nodeB))
+                if (nodes.TryGetValue(edge.nodeB, out LDY_MapNode nodeB))
                     nodeB.connectedNodeIds.Remove(edge.nodeA);
             }
         }
@@ -115,8 +115,8 @@ public class MapStateManager : MonoBehaviour
             bool expired = edge.expireTurn <= currentTurn;
             if (expired)
             {
-                if (GraphMapSetup.Instance != null)
-                    GraphMapSetup.Instance.SetWallVisual(edge.nodeA, edge.nodeB, false);
+                if (LDY_GraphMapSetup.Instance != null)
+                    LDY_GraphMapSetup.Instance.SetWallVisual(edge.nodeA, edge.nodeB, false);
                 Debug.Log($"[MapState] 벽 해제: {edge.nodeA} - {edge.nodeB}");
             }
             return expired;
@@ -129,9 +129,9 @@ public class MapStateManager : MonoBehaviour
             {
                 if (nodes != null)
                 {
-                    if (nodes.TryGetValue(edge.nodeA, out MapNode nodeA))
+                    if (nodes.TryGetValue(edge.nodeA, out LDY_MapNode nodeA))
                         nodeA.connectedNodeIds.Remove(edge.nodeB);
-                    if (nodes.TryGetValue(edge.nodeB, out MapNode nodeB))
+                    if (nodes.TryGetValue(edge.nodeB, out LDY_MapNode nodeB))
                         nodeB.connectedNodeIds.Remove(edge.nodeA);
                 }
                 Debug.Log($"[MapState] 임시 길 소멸: {edge.nodeA} - {edge.nodeB}");
@@ -150,7 +150,7 @@ public class MapStateManager : MonoBehaviour
             return;
         }
 
-        int currentTurn = TurnManager.Instance != null ? TurnManager.Instance.currentTurn : 0;
+        int currentTurn = LDY_TurnManager.Instance != null ? LDY_TurnManager.Instance.currentTurn : 0;
 
         switch (skillName)
         {
