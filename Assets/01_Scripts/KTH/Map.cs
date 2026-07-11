@@ -6,17 +6,10 @@ public class Map : MonoBehaviour
 {
  
     [SerializeField] private GameObject map;
-    [SerializeField] private RectTransform mapRect;   // map의 RectTransform
+    [SerializeField] private float scaleStep = 0.01f;   // 한 스텝당 커지는 크기 단위
+    [SerializeField] private float scaleDuration = 0.3f; // 전체 애니메이션 시간
 
-    [SerializeField] private float dropDuration = 0.5f;
-
-    private float startY;   // 처음(화면 밖) Y 위치
-    private Tween moveTween;
-
-    private void Awake()
-    {
-        startY = mapRect.anchoredPosition.y; // 화면 밖에 배치된 초기 위치 저장
-    }
+    private Tween scaleTween;
 
     private void OnMouseDown()
     {
@@ -31,24 +24,20 @@ public class Map : MonoBehaviour
     private void OnMaxImage()
     {
         map.SetActive(true);
+        map.transform.localScale = Vector3.zero; // 0에서 시작
 
-        // 혹시 이전 위치가 남아있을 수 있으니 시작 위치로 초기화
-        Vector2 pos = mapRect.anchoredPosition;
-        pos.y = startY;
-        mapRect.anchoredPosition = pos;
-
-        moveTween?.Kill();
-        moveTween = mapRect
-            .DOAnchorPosY(0f, dropDuration)   // Y가 0이 될 때까지 부드럽게 내려감
-            .SetEase(Ease.OutBack, 1.2f);     // 살짝 튕기는 반동 포함
+        scaleTween?.Kill();
+        scaleTween = map.transform
+            .DOScale(Vector3.one, scaleDuration)
+            .SetEase(Ease.OutQuad);
     }
 
     private void OnMinImage()
     {
-        moveTween?.Kill();
-        moveTween = mapRect
-            .DOAnchorPosY(startY, dropDuration)  // 다시 원래(화면 밖) 위치로 올라감
-            .SetEase(Ease.InBack)
+        scaleTween?.Kill();
+        scaleTween = map.transform
+            .DOScale(Vector3.zero, scaleDuration)
+            .SetEase(Ease.InQuad)
             .OnComplete(() => map.SetActive(false));
     }
 }
