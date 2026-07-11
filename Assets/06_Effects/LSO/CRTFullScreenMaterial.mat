@@ -42,7 +42,7 @@ Material:
     - _Blur_Offset: 0.003
     - _LineCount: 300
     - _Scan_Lines_Speed: -0.03
-    - _Transparent: 0.141
+    - _Transparent: 0
     m_Colors:
     - _Color: {r: 4, g: 4, b: 4, a: 1}
     - _HitColor: {r: 0.6320754, g: 0.08646317, b: 0.08646317, a: 1}

@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections;
+﻿using System.Collections;
 using UnityEngine;
 using UnityEngine.EventSystems;
 
@@ -9,7 +8,7 @@ namespace _01_Scripts.LSO
     {
         private LSO_ColpoManager colpoManager;
         private float timer;
-        private const float TickInterval = 0.01f;
+        private const float TickInterval = 0.15f;
 
         public LDY_GangData data;
         private LDY_GangType gangType;
@@ -32,9 +31,9 @@ namespace _01_Scripts.LSO
                 {
                     timer = 0f;
                     
-                    int cur = colpoManager.CurrentUp(GetStep(colpoManager.Current));
+                  double cur =  colpoManager.CurrentUp(GetStep(colpoManager.Current));
                     
-                   // LSO_MoneyManager.Instance.AddMoney(cur);
+                   LSO_MoneyManager.Instance.AddMoney(cur);
                 }
 
                 if (colpoManager.Current >= colpoManager.ColpoLimit && !colpoManager.isColpoTime)
@@ -91,9 +90,28 @@ namespace _01_Scripts.LSO
             colpoManager.isColpoTime = false;
             colpoManager.colpoTimeEnd = false;
 
-            LSO_ColpoManager.OnColpoResult?.Invoke(colpoResultType, colpoManager.Current, gangType);
+            double resultMoney = 0;
+            
+            switch (colpoResultType.ToString())
+            { 
+                case "Normal":
+                    resultMoney = colpoManager.Current;
+                    break;
+                case "Fail":
+                    resultMoney = colpoManager.Current * 0;
+                    break;
+                case "Colpo":
+                    resultMoney = colpoManager.Current;
+                    break;
+                default:
+                    Debug.LogError("이상한 값: " + colpoResultType.ToString());
+                    break;
+            }
+            
+            
             colpoManager.ResetColpo();
-
+            LSO_ColpoManager.OnColpoResult?.Invoke(colpoResultType, resultMoney, gangType);
+            
             if (colpoManager.holding)
             {
                 colpoManager.HandlePointerUp();
@@ -102,7 +120,7 @@ namespace _01_Scripts.LSO
             //Debug.Log(colpoResultType.ToString());
         }
         
-        private int GetStep(int value)
+        private int GetStep(double value)
         {
             if (value <= 0) return 1;
 

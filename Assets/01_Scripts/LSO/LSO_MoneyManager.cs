@@ -1,6 +1,7 @@
 using _01_Scripts.LSO;
 using TMPro;
 using UnityEngine;
+using UnityEngine.VFX;
 
 public class LSO_MoneyManager : MonoBehaviour
 {
@@ -8,7 +9,7 @@ public class LSO_MoneyManager : MonoBehaviour
    
    [SerializeField] private TextMeshProUGUI moneyText;
    
-   public int Money{get; private set;}
+   public double Money{get; private set;}
 
    private void Awake()
    {
@@ -45,18 +46,21 @@ public class LSO_MoneyManager : MonoBehaviour
       return  false;
    }
 
-   public void AddMoney(int value)
+   public void AddMoney(double value)
    {
       Money += value;
       moneyText.text = Money.ToString();
    }
 
-   public void AddMoney(LSO_ColpoManager.ColpoResultType result, int value, LDY_GangType gangType)
+   public void AddMoney(LSO_ColpoManager.ColpoResultType result, double value, LDY_GangType gangType)
    {
       Debug.Log($"{gangType} 갱으로 부터  {result}을/를 해 {value}달러만큼 털어왔습니다");
-      
-      
-      Money += value;
+
+      if (value == 0)
+      {
+         Money = value;
+      }
+     
       moneyText.text = Money.ToString();
    }
 }
