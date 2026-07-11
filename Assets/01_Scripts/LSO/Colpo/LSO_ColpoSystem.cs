@@ -8,7 +8,7 @@ namespace _01_Scripts.LSO
     {
         private LSO_ColpoManager colpoManager;
         private float timer;
-        private const float TickInterval = 0.01f;
+        private const float TickInterval = 0.15f;
 
         public LDY_GangData data;
         private LDY_GangType gangType;
@@ -30,7 +30,10 @@ namespace _01_Scripts.LSO
                 if (timer >= TickInterval)
                 {
                     timer = 0f;
-                    colpoManager.CurrentUp();
+                    
+                  double cur =  colpoManager.CurrentUp(GetStep(colpoManager.Current));
+                    
+                   LSO_MoneyManager.Instance.AddMoney(cur);
                 }
 
                 if (colpoManager.Current >= colpoManager.ColpoLimit && !colpoManager.isColpoTime)
@@ -38,7 +41,7 @@ namespace _01_Scripts.LSO
                     colpoTimeCoroutine = StartCoroutine(EnterColpoTime());
                 }
 
-                if (colpoManager.ColpoTimeEnd && !resultAlreadyGiven)
+                if (colpoManager.colpoTimeEnd && !resultAlreadyGiven)
                 {
                     ExitColpoTime(LSO_ColpoManager.ColpoResultType.Fail);
                 }
@@ -60,14 +63,9 @@ namespace _01_Scripts.LSO
                 return;
             }
 
-            if (colpoManager.isColpoTime)
-            {
-                ExitColpoTime(LSO_ColpoManager.ColpoResultType.Colpo);
-            }
-            else
-            {
-                ExitColpoTime(LSO_ColpoManager.ColpoResultType.Normal);
-            }
+            ExitColpoTime(colpoManager.isColpoTime
+                ? LSO_ColpoManager.ColpoResultType.Colpo
+                : LSO_ColpoManager.ColpoResultType.Normal);
         }
 
         private IEnumerator EnterColpoTime()
@@ -75,7 +73,7 @@ namespace _01_Scripts.LSO
             colpoManager.isColpoTime = true;
             yield return new WaitForSeconds(colpoManager.ColpoTime);
             colpoManager.isColpoTime = false;
-            colpoManager.ColpoTimeEnd = true;
+            colpoManager.colpoTimeEnd = true;
         }
 
         private void ExitColpoTime(LSO_ColpoManager.ColpoResultType colpoResultType)
@@ -90,17 +88,49 @@ namespace _01_Scripts.LSO
             resultAlreadyGiven = true;
 
             colpoManager.isColpoTime = false;
-            colpoManager.ColpoTimeEnd = false;
+            colpoManager.colpoTimeEnd = false;
 
-            LSO_ColpoManager.OnColpoResult?.Invoke(colpoResultType, colpoManager.Current, gangType);
+            double resultMoney = 0;
+            
+            switch (colpoResultType.ToString())
+            { 
+                case "Normal":
+                    resultMoney = colpoManager.Current;
+                    break;
+                case "Fail":
+                    resultMoney = colpoManager.Current * 0;
+                    break;
+                case "Colpo":
+                    resultMoney = colpoManager.Current;
+                    break;
+                default:
+                    Debug.LogError("이상한 값: " + colpoResultType.ToString());
+                    break;
+            }
+            
+            
             colpoManager.ResetColpo();
-
+            LSO_ColpoManager.OnColpoResult?.Invoke(colpoResultType, resultMoney, gangType);
+            
             if (colpoManager.holding)
             {
                 colpoManager.HandlePointerUp();
             }
 
             //Debug.Log(colpoResultType.ToString());
+        }
+        
+        private int GetStep(double value)
+        {
+            if (value <= 0) return 1;
+
+            int step = 1;
+            while (value >= 10)
+            {
+                value /= 10;
+                step *= 10;
+            }
+            return step;
         }
     }
 }

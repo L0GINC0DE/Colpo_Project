@@ -1,22 +1,25 @@
 using _01_Scripts.LSO;
 using DG.Tweening;
+using Unity.Cinemachine;
 using UnityEngine;
 
-public class LSO_ColpoUI : MonoBehaviour
+public class LSO_ColpoEffect : MonoBehaviour
 {
     private static readonly int Transparent = Shader.PropertyToID("_Transparent");
     [SerializeField] private GameObject handle;
 
-    private float ColpoLimit => colpoManager.ColpoLimit;
-    private float Current => colpoManager.Current;
+    private double ColpoLimit => colpoManager.ColpoLimit;
+    private double Current => colpoManager.Current;
     private bool Holding => colpoManager.holding;
     private bool is80;
 
     private LSO_ColpoManager colpoManager;
 
     [SerializeField] private GameObject playerCam;
-    [SerializeField] private float duration = 0.3f;
+    [SerializeField] private float duration = 0.2f;
     [SerializeField] private GameObject hinge;
+    [SerializeField] private Light roomLight;
+    [SerializeField] private CinemachineImpulseSource impulseSource;
 
     private float originalPosZ;
     private float originalRotY;
@@ -67,23 +70,24 @@ public class LSO_ColpoUI : MonoBehaviour
         playerCam.transform.DOKill();
         hinge.transform.DOKill();
 
-        playerCam.transform.DOMoveZ(playerCam.transform.position.z + 0.25f, duration).SetEase(Ease.OutQuad).SetUpdate(true);
-        hinge.transform.DORotate(new Vector3(
-            hinge.transform.rotation.eulerAngles.x,
-            hinge.transform.rotation.eulerAngles.y + 11.25f,
-            hinge.transform.rotation.eulerAngles.z), duration).SetUpdate(true);
+        // 매번 명확한 기준 회전값으로 리셋 (드리프트 방지)
+        hinge.transform.rotation = Quaternion.Euler(0f, originalRotY, 0f);
+
+        playerCam.transform.DOMoveZ(originalPosZ + 0.25f, duration).SetEase(Ease.OutQuad).SetUpdate(true);
+        hinge.transform.DORotate(new Vector3(0f, originalRotY + 22.25f, 0f), duration * 5).SetUpdate(true);
     }
+
 
     private void PlayCloseAnimation()
     {
         playerCam.transform.DOKill();
-        hinge.transform.DOKill();
+        
 
         playerCam.transform.DOMoveZ(originalPosZ, duration).SetEase(Ease.OutQuad).SetUpdate(true);
-        hinge.transform.DORotate(new Vector3(
+        /*hinge.transform.DORotate(new Vector3(
             hinge.transform.rotation.eulerAngles.x,
             originalRotY,
-            hinge.transform.rotation.eulerAngles.z), duration).SetUpdate(true);
+            hinge.transform.rotation.eulerAngles.z), duration).SetUpdate(true);*/
         is80 = false;
     }
 
@@ -106,8 +110,18 @@ public class LSO_ColpoUI : MonoBehaviour
         if (ColpoLimit * 0.8f <= Current && !is80)
         {
             is80 = true;
-            //Debug.LogError("80%");
         }
+
+        if (colpoManager.isColpoTime)
+        {
+            roomLight.intensity = 10;
+        }
+        else if (!colpoManager.isColpoTime)
+        {
+            roomLight.intensity = 0;
+        }
+        
+        roomLight.intensity = colpoManager.isColpoTime ? 10 : 0;
 
         handle.transform.Rotate(Vector3.up, 90 * Time.deltaTime, Space.Self);
     }
@@ -118,7 +132,7 @@ public class LSO_ColpoUI : MonoBehaviour
         fullscreenMaterial.DOFloat(originalRedTransparent, "_Transparent", 0.2f).SetEase(Ease.OutQuad).SetLoops(2, LoopType.Yoyo);
     }
 
-    private void ResultEffect(LSO_ColpoManager.ColpoResultType result, int current, LDY_GangType gangType)
+    private void ResultEffect(LSO_ColpoManager.ColpoResultType result, double current, LDY_GangType gangType)
     {
         DOTween.Kill(fullscreenMaterial);
         fullscreenMaterial.SetFloat(Transparent, 0f);
@@ -126,17 +140,37 @@ public class LSO_ColpoUI : MonoBehaviour
         switch (result.ToString())
         { 
             case "Normal":
-                Debug.Log("노말");
+                NormalEffect();
                 break;
             case "Fail":
-                Debug.Log("실패");
+                FailEffect();
                 break;
             case "Colpo":
-                Debug.Log("콜포!");
+                ColpoEffect();
                 break;
             default:
                 Debug.LogError("이상한 값: " + result.ToString());
                 break;
         }
     }
+
+    private void ColpoEffect()
+{
+    hinge.transform.DOKill();
+    impulseSource.GenerateImpulse();
+    hinge.transform.DORotate(new Vector3(0f, 90f, 0f), duration);
+}
+
+private void NormalEffect()
+{
+    hinge.transform.DOKill();
+    hinge.transform.DORotate(new Vector3(0f, originalRotY, 0f), duration).SetUpdate(true);
+}
+
+private void FailEffect()
+{
+    hinge.transform.DOKill();
+    hinge.transform.DORotate(new Vector3(0f, originalRotY, 0f), duration / 2)
+        .SetEase(Ease.OutQuad).OnComplete(impulseSource.GenerateImpulse).SetUpdate(true);
+}
 }

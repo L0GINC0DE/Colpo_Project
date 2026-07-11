@@ -11,10 +11,15 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="2aef30f8-3169-45b4-af34-d924f3282f78" name="변경" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/.idea.Colpo_Project/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.Colpo_Project/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/00_Scenes/LSO/LSO_TestScene.unity" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/00_Scenes/LSO/LSO_TestScene.unity" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Assets/01_Scripts/LSO/Colpo/LSO_ColpoManager.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/01_Scripts/LSO/Colpo/LSO_ColpoManager.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Assets/01_Scripts/LSO/Colpo/LSO_ColpoSystem.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/01_Scripts/LSO/Colpo/LSO_ColpoSystem.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/01_Scripts/LSO/Colpo/LSO_ColpoUI.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/01_Scripts/LSO/Colpo/LSO_ColpoUI.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/01_Scripts/LSO/Colpo/LSO_ColpoUI.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/01_Scripts/LSO/Colpo/LSO_ColpoEffect.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/01_Scripts/LSO/Colpo/LSO_ColpoUI.cs.meta" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/01_Scripts/LSO/Colpo/LSO_ColpoEffect.cs.meta" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Assets/01_Scripts/LSO/LSO_MoneyManager.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/01_Scripts/LSO/LSO_MoneyManager.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/06_Effects/LSO/CRTFullScreenMaterial.mat" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/06_Effects/LSO/CRTFullScreenMaterial.mat" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Settings/PC_Renderer.asset" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Settings/PC_Renderer.asset" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -29,6 +34,7 @@
     <setting file="file://$PROJECT_DIR$/Assets/01_Scripts/LSO/Colpo/LSO_ColpoSystem.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/Assets/01_Scripts/LSO/Colpo/LSO_ColpoUI.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/Assets/01_Scripts/LSO/LSO_MoneyManager.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/Assets/01_Scripts/LSO/LSO_PlayerMovement.cs" root0="FORCE_HIGHLIGHTING" />
   </component>
   <component name="McpProjectServerCommands">
     <commands />
@@ -55,7 +61,7 @@
     "RunOnceActivity.typescript.service.memoryLimit.init": "true",
     "cidr.known.project.marker": "true",
     "codeWithMe.voiceChat.enabledByDefault": "false",
-    "git-widget-placeholder": "DLJ",
+    "git-widget-placeholder": "LSO",
     "node.js.detected.package.eslint": "true",
     "node.js.detected.package.tslint": "true",
     "node.js.selected.package.eslint": "(autodetect)",
@@ -113,6 +119,7 @@
       <workItem from="1783507416232" duration="322000" />
       <workItem from="1783603746565" duration="7096000" />
       <workItem from="1783640136511" duration="9242000" />
+      <workItem from="1783749183647" duration="4098000" />
     </task>
     <servers />
   </component>

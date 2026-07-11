@@ -15,19 +15,19 @@ namespace _01_Scripts.LSO
         /// <summary>
         /// 콜포 결과를 알려주는 이벤트
         /// </summary>
-        public static Action<ColpoResultType, int, LDY_GangType> OnColpoResult;
+        public static Action<ColpoResultType, double, LDY_GangType> OnColpoResult;
 
-        public int ColpoMax { get; private set; } = 1000;
-        private int ColpoMin { get; set; } = 0;
-        public int ColpoLimit{get; private set;}
+        public int ColpoMax { get; private set; } = 10;
+        private int ColpoMin { get; set; } = 1;
+        public double ColpoLimit{get; private set;}
 
-        public float ColpoTime { get; private set; } = 0.7f;
+        public float ColpoTime { get; private set; } = 0.3f;
         
-        public int Current{get; private set;}
+        public double Current{get; private set;}
 
         public bool isColpoTime;
         public bool holding;
-        public bool ColpoTimeEnd;
+        public bool colpoTimeEnd;
 
         public enum ColpoResultType
         {
@@ -57,25 +57,22 @@ namespace _01_Scripts.LSO
             OnColpoPointerUp?.Invoke();
         }
 
-        public int ColpoMaxUp(int value)
+        public void ColpoMaxUp(int value)
         {
             ColpoMax += value;
-            
-            return ColpoMax;
         }
 
-        public int ResetColpo()
+        public void ResetColpo()
         {
-            ColpoLimit = Random.Range(ColpoMin, ColpoMax);
+            ColpoLimit = Random.Range(ColpoMin, ColpoMax + 1) * Math.Pow(10, Random.Range(1, 6 +1));
+            
             Current = 0;
-            
-            return ColpoLimit;
         }
 
-        public int CurrentUp()
+        public double CurrentUp(int value = 1)
         {
-            Current += 1;
-            return Current;
+            Current += value;
+            return value;
         }
     }
 }
