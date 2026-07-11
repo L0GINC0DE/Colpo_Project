@@ -26,7 +26,8 @@ Material:
     m_TexEnvs: []
     m_Ints: []
     m_Floats:
-    - _size: 2.69
+    - _Transparent: 0.5
+    - _size: 2
     m_Colors: []
   m_BuildTextureStacks: []
   m_AllowLocking: 1

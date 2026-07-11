@@ -15,7 +15,11 @@ MonoBehaviour:
   gangName: Scale
   type: 3
   riskLevel: 0
+  isRiskFixed: 0
   maxFunds: 1000
   currentFunds: 1000
   currentNodeId: base
   damageResistance: 0.5
+  resistanceGainPerTenTurns: 0.5
+  hackLockedUntilTurn: 0
+  maxChaseDistanceByRisk: 3

@@ -1,0 +1,24 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c26142d4f2bcf79408e5ab320e96543f, type: 3}
+  m_Name: gE
+  m_EditorClassIdentifier: Assembly-CSharp::GangData
+  gangName: Support
+  type: 5
+  riskLevel: 1
+  isRiskFixed: 0
+  maxFunds: 1000
+  currentFunds: 0
+  currentNodeId: gE
+  damageResistance: 0
+  hackLockedUntilTurn: 0
+  maxChaseDistanceByRisk: 5
