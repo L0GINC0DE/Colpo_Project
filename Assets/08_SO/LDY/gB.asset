@@ -11,14 +11,12 @@ MonoBehaviour:
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: c26142d4f2bcf79408e5ab320e96543f, type: 3}
   m_Name: gB
-  m_EditorClassIdentifier: Assembly-CSharp::GangData
+  m_EditorClassIdentifier: Assembly-CSharp::LDY_GangConfig
+  gangId: Greedy
   gangName: Greedy
   type: 1
   riskLevel: 0
   isRiskFixed: 0
   maxFunds: 1000
-  currentFunds: 1000
-  currentNodeId: base
   damageResistance: 0
-  hackLockedUntilTurn: 0
   maxChaseDistanceByRisk: 3

@@ -11,14 +11,12 @@ MonoBehaviour:
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: c26142d4f2bcf79408e5ab320e96543f, type: 3}
   m_Name: gG
-  m_EditorClassIdentifier: Assembly-CSharp::GangData
+  m_EditorClassIdentifier: Assembly-CSharp::LDY_GangConfig
+  gangId: Tanker
   gangName: Tanker
   type: 7
   riskLevel: 2
   isRiskFixed: 0
   maxFunds: 1000
-  currentFunds: 1000
-  currentNodeId: gG
   damageResistance: 0.3
-  hackLockedUntilTurn: 0
   maxChaseDistanceByRisk: 8

@@ -5,7 +5,8 @@
       "Bash(grep -n \"m_Name: Camera$\" -A2 \"Assets/00_Scenes/LDY/LDY_AStar.unity\")",
       "Bash(python3 -c ' *)",
       "Bash(python3)",
-      "Bash(grep -v '\\\\.meta$')"
+      "Bash(grep -v '\\\\.meta$')",
+      "Bash(git mv *)"
     ]
   }
 }

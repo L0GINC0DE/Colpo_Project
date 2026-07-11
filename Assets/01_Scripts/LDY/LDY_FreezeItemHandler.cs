@@ -60,11 +60,11 @@ public class LDY_FreezeItemHandler : MonoBehaviour
         if (Physics.Raycast(ray, out RaycastHit hit))
         {
             LDY_GangController controller = hit.collider.GetComponentInParent<LDY_GangController>();
-            if (controller != null && controller.gangData != null)
+            if (controller != null && controller.config != null)
             {
-                LDY_GangManager.Instance.Freeze(controller.gangData.gangName, freezeDuration);
+                LDY_GangManager.Instance.Freeze(controller.config.gangId, freezeDuration);
                 freezeCharges--;
-                Debug.Log($"[LDY_FreezeItemHandler] {controller.gangData.gangName} 얼림 ({freezeDuration}턴, 남은 개수: {freezeCharges})");
+                Debug.Log($"[LDY_FreezeItemHandler] {controller.config.gangName} 얼림 ({freezeDuration}턴, 남은 개수: {freezeCharges})");
             }
         }
 

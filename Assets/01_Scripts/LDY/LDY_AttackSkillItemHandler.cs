@@ -51,9 +51,9 @@ public class LDY_AttackSkillItemHandler : MonoBehaviour
         if (Physics.Raycast(ray, out RaycastHit hit))
         {
             LDY_GangController controller = hit.collider.GetComponentInParent<LDY_GangController>();
-            if (controller != null && controller.gangData != null && LDY_TurnManager.Instance != null)
+            if (controller != null && controller.config != null && LDY_TurnManager.Instance != null)
             {
-                string gangId = controller.gangData.gangName;
+                string gangId = controller.config.gangId;
                 LDY_TurnManager.Instance.PerformGangWindowAction(() => LDY_GameEvents.SkillUsed("기밀정보유출", gangId, 0));
 
                 charges--;

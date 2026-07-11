@@ -10,7 +10,7 @@ namespace _01_Scripts.LSO
         private float timer;
         private const float TickInterval = 0.01f;
 
-        public LDY_GangData data;
+        public LDY_GangConfig data;
         private LDY_GangType gangType;
 
         private bool resultAlreadyGiven;

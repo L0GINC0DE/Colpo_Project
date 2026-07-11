@@ -50,11 +50,11 @@ public class LDY_NoiseItemHandler : MonoBehaviour
         if (Physics.Raycast(ray, out RaycastHit hit))
         {
             LDY_GangController controller = hit.collider.GetComponentInParent<LDY_GangController>();
-            if (controller != null && controller.gangData != null)
+            if (controller != null && controller.config != null)
             {
-                LDY_GangManager.Instance.Noise(controller.gangData.gangName, noiseDuration);
+                LDY_GangManager.Instance.Noise(controller.config.gangId, noiseDuration);
                 noiseCharges--;
-                Debug.Log($"[LDY_NoiseItemHandler] {controller.gangData.gangName} 노이즈 ({noiseDuration}턴, 남은 개수: {noiseCharges})");
+                Debug.Log($"[LDY_NoiseItemHandler] {controller.config.gangName} 노이즈 ({noiseDuration}턴, 남은 개수: {noiseCharges})");
             }
         }
 

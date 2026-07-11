@@ -506,7 +506,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c2ff6fb9a42d6964483a6b3f313e161b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::GangController
-  gangData: {fileID: 11400000, guid: 431b99ea9c9e7d74eb16158cab84710e, type: 2}
+  config: {fileID: 11400000, guid: 431b99ea9c9e7d74eb16158cab84710e, type: 2}
   pursuing: 0
   playerBaseId: base
   spawnNodeId: gC
@@ -555,7 +555,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c2ff6fb9a42d6964483a6b3f313e161b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::GangController
-  gangData: {fileID: 11400000, guid: 664957eafec34aebabcbecfefa1e909b, type: 2}
+  config: {fileID: 11400000, guid: 664957eafec34aebabcbecfefa1e909b, type: 2}
   pursuing: 0
   playerBaseId: base
   spawnNodeId: gE
@@ -604,7 +604,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c2ff6fb9a42d6964483a6b3f313e161b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::GangController
-  gangData: {fileID: 11400000, guid: f48a6061ca3148c2bd9b256f2b2a96f9, type: 2}
+  config: {fileID: 11400000, guid: f48a6061ca3148c2bd9b256f2b2a96f9, type: 2}
   pursuing: 0
   playerBaseId: base
   spawnNodeId: gF
@@ -653,7 +653,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c2ff6fb9a42d6964483a6b3f313e161b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::GangController
-  gangData: {fileID: 11400000, guid: e136201656b94b2697aa4377729d7f0b, type: 2}
+  config: {fileID: 11400000, guid: e136201656b94b2697aa4377729d7f0b, type: 2}
   pursuing: 0
   playerBaseId: base
   spawnNodeId: gG
@@ -1035,7 +1035,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c2ff6fb9a42d6964483a6b3f313e161b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::GangController
-  gangData: {fileID: 11400000, guid: 0342a2f62c5f3da4694392f3f2db5e32, type: 2}
+  config: {fileID: 11400000, guid: 0342a2f62c5f3da4694392f3f2db5e32, type: 2}
   pursuing: 0
   playerBaseId: base
   spawnNodeId: gB
@@ -2132,7 +2132,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c2ff6fb9a42d6964483a6b3f313e161b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::GangController
-  gangData: {fileID: 11400000, guid: 82f74af5df847704f86bdedc13ccea24, type: 2}
+  config: {fileID: 11400000, guid: 82f74af5df847704f86bdedc13ccea24, type: 2}
   pursuing: 0
   playerBaseId: base
   spawnNodeId: gD
@@ -2304,7 +2304,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c2ff6fb9a42d6964483a6b3f313e161b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::GangController
-  gangData: {fileID: 11400000, guid: 7f11f0be007ac874d8585fbcd6bf94ce, type: 2}
+  config: {fileID: 11400000, guid: 7f11f0be007ac874d8585fbcd6bf94ce, type: 2}
   pursuing: 0
   playerBaseId: base
   spawnNodeId: gA

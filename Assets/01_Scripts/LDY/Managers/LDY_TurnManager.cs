@@ -1,15 +1,20 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class LDY_TurnManager : MonoBehaviour
+public class LDY_TurnManager : MonoBehaviour, LDY_ISaveable
 {
     public static LDY_TurnManager Instance { get; private set; }
 
     public int currentTurn = 0;
     public int maxTurn = 30;
 
+    // OnMoneyChanged 이벤트는 변화량만 방송해서, 실제 누적 총액은 여기서 따로 들고 있는다.
+    public int playerMoney = 0;
+
     private bool isGameOver;
+
+    public string SaveKey => "turn";
 
     // 갱단창 안에서 하는 유료 행동(해킹/털기, 돈세탁, 공격형 스킬-기밀정보유출)의 공통 진입점.
     // action을 실행한 뒤 반드시 턴을 소모시킨다. 방어형 스킬(길목틀어막기/새길만들기/
@@ -35,12 +40,19 @@ public class LDY_TurnManager : MonoBehaviour
     {
         LDY_GameEvents.OnGangReachedBase += HandleGangReachedBase;
         LDY_GameEvents.OnAllGangsDefeated += HandleAllGangsDefeated;
+        LDY_GameEvents.OnMoneyChanged += HandleMoneyChanged;
     }
 
     private void OnDisable()
     {
         LDY_GameEvents.OnGangReachedBase -= HandleGangReachedBase;
         LDY_GameEvents.OnAllGangsDefeated -= HandleAllGangsDefeated;
+        LDY_GameEvents.OnMoneyChanged -= HandleMoneyChanged;
+    }
+
+    private void HandleMoneyChanged(int amount)
+    {
+        playerMoney += amount;
     }
 
     public void AdvanceTurn()
@@ -89,6 +101,10 @@ public class LDY_TurnManager : MonoBehaviour
             isGameOver = true;
             Debug.LogWarning($"[배드엔딩] {maxTurn}턴 제한에 도달했습니다 - 게임 종료");
         }
+
+        // 턴이 넘어갈 때마다 자동 저장.
+        if (LDY_SaveSystem.Instance != null)
+            LDY_SaveSystem.Instance.AutoSave("턴 종료");
     }
 
     private void HandleGangReachedBase(string gangId)
@@ -106,6 +122,7 @@ public class LDY_TurnManager : MonoBehaviour
     public void ResetGame()
     {
         currentTurn = 0;
+        playerMoney = 0;
         isGameOver = false;
 
         foreach (LDY_GangController controller in LDY_GangManager.Instance.GetAllGangControllers())
@@ -127,5 +144,35 @@ public class LDY_TurnManager : MonoBehaviour
             LDY_NoiseItemHandler.Instance.ResetCharges();
 
         Debug.Log("[LDY_TurnManager] 게임 리스타트 - 모든 상태를 초기화했습니다.");
+    }
+
+    [System.Serializable]
+    private class TurnSaveData
+    {
+        public int currentTurn;
+        public int playerMoney;
+        public bool isGameOver;
+    }
+
+    public string CaptureState()
+    {
+        var data = new TurnSaveData
+        {
+            currentTurn = currentTurn,
+            playerMoney = playerMoney,
+            isGameOver = isGameOver
+        };
+        return JsonUtility.ToJson(data);
+    }
+
+    public void RestoreState(string json)
+    {
+        TurnSaveData data = JsonUtility.FromJson<TurnSaveData>(json);
+        if (data == null)
+            return;
+
+        currentTurn = data.currentTurn;
+        playerMoney = data.playerMoney;
+        isGameOver = data.isGameOver;
     }
 }

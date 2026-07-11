@@ -75,8 +75,8 @@ public class LDY_PathRedirectHandler : MonoBehaviour
         }
 
         selectedGang = controller;
-        pathBuilder = new List<string> { controller.gangData.currentNodeId };
-        Debug.Log($"[LDY_PathRedirectHandler] {controller.gangData.gangName} 선택 - 이어질 노드를 좌클릭하세요 (F로 확정)");
+        pathBuilder = new List<string> { controller.runtimeState.currentNodeId };
+        Debug.Log($"[LDY_PathRedirectHandler] {controller.config.gangName} 선택 - 이어질 노드를 좌클릭하세요 (F로 확정)");
     }
 
     private void TryExtendPath(RaycastHit hit)

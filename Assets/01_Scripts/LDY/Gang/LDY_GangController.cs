@@ -1,25 +1,30 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using DG.Tweening;
 using UnityEngine;
 
 public class LDY_GangController : MonoBehaviour
 {
-    public LDY_GangData gangData;
-    public bool pursuing;
+    // 절대 안 바뀌는 설정값(ScriptableObject). 매 게임마다 바뀌는 값은 runtimeState 쪽으로 뺐다.
+    public LDY_GangConfig config;
+
+    // 매 게임마다 바뀌는 상태. LDY_GangManager.Awake()가 게임 시작 시 config 기준으로
+    // 만들어서 넣어준다(AssignRuntimeState) - 세이브 파일을 불러올 때는 ApplyRuntimeState로
+    // 통째로 교체된다.
+    public LDY_GangRuntimeState runtimeState { get; private set; }
+
     public string playerBaseId = "base";
 
     // 리스타트 기준 노드. currentNodeId는 플레이 중 계속 바뀌고 세션 넘어 안 돌아올 때도
-    // 있어서 따로 저장해둔다. 비워두면 Start()에서 자동으로 채워짐.
+    // 있어서 따로 저장해둔다.
     [SerializeField] private string spawnNodeId;
+    public string SpawnNodeId => spawnNodeId;
 
     [SerializeField] private float moveDuration = 0.4f;
 
     // 직진파 전용 - A*를 한 번만 계산해서 캐싱해두고 이후엔 재탐색 없이 그대로 따라감.
     private List<string> cachedPath;
     private int cachedPathIndex;
-
-    private float initialDamageResistance;
 
     // 얼리기: 남은 정지 턴. 0보다 크면 ProcessTurn에서 이동을 스킵.
     // 얼면 마커 위에 FreezeItemHandler가 지정한 프리팹/머티리얼을 그대로 겹쳐 보여줌.
@@ -40,26 +45,40 @@ public class LDY_GangController : MonoBehaviour
     private int lastTurnCount;
     private int movedOnTurn = -1;
 
+    // 세이브/로드와 무관하게, 게임이 시작될 때 LDY_GangManager가 반드시 먼저 채워준다
+    // (Awake 시점에 전부 만들어서 넣어주므로 이 컨트롤러의 Start()에서는 항상 값이 있어야 정상).
+    public void AssignRuntimeState(LDY_GangRuntimeState state) => runtimeState = state;
+
+    // 세이브 파일에서 불러온 런타임 상태를 통째로 덮어쓰고, 위치/생존 여부도 거기 맞춰 되돌린다.
+    public void ApplyRuntimeState(LDY_GangRuntimeState savedState)
+    {
+        runtimeState = savedState;
+        gameObject.SetActive(runtimeState.currentFunds > 0);
+
+        if (LDY_GraphMapSetup.Instance != null && LDY_GraphMapSetup.Instance.Nodes.TryGetValue(runtimeState.currentNodeId, out LDY_MapNode node))
+            transform.position = node.position;
+    }
+
+    // 외부에서는 예전처럼 controller.pursuing으로 그대로 읽고 쓸 수 있게 프로퍼티로 감싸서
+    // runtimeState.pursuing에 위임한다(세이브 대상이 되려면 runtimeState 안에 있어야 함).
+    public bool pursuing
+    {
+        get => runtimeState.pursuing;
+        set => runtimeState.pursuing = value;
+    }
+
     private void Start()
     {
-        if (string.IsNullOrEmpty(spawnNodeId))
-            spawnNodeId = gangData.currentNodeId;
+        if (runtimeState == null)
+        {
+            Debug.LogError($"[{config.gangName}] runtimeState가 비어있습니다 - LDY_GangManager가 먼저 초기화됐는지 확인하세요.");
+            return;
+        }
 
-        // ScriptableObject라 이전 Play 세션 값이 남아있을 수 있어서 기본은 스폰 위치로 초기화.
-        // 다만 세이브 파일에 이 갱단 위치가 저장돼 있으면(나갔다 다시 들어온 경우) 그걸 우선한다.
-        string startNodeId = spawnNodeId;
-        if (LDY_SaveManager.Instance != null && LDY_SaveManager.Instance.TryGetSavedGangNodeId(gangData.gangName, out string savedNodeId))
-            startNodeId = savedNodeId;
-
-        gangData.currentNodeId = startNodeId;
-        gangData.currentFunds = gangData.maxFunds;
-        gangData.hackLockedUntilTurn = 0;
-        initialDamageResistance = gangData.damageResistance;
-
-        if (LDY_GraphMapSetup.Instance != null && LDY_GraphMapSetup.Instance.Nodes.TryGetValue(startNodeId, out LDY_MapNode node))
+        if (LDY_GraphMapSetup.Instance != null && LDY_GraphMapSetup.Instance.Nodes.TryGetValue(runtimeState.currentNodeId, out LDY_MapNode node))
             transform.position = node.position;
 
-        LDY_MapVisualFactory.CreateMarker($"GangVisual_{gangData.gangName}", transform, transform.position, 0.7f, GetGangColor(gangData.type), keepCollider: true);
+        LDY_MapVisualFactory.CreateMarker($"GangVisual_{config.gangName}", transform, transform.position, 0.7f, GetGangColor(config.type), keepCollider: true);
     }
 
     // 얼리기 스킬: turns턴 동안 ProcessTurn에서 이동을 건너뛰게 하고, 얼음 오버레이를 켠다.
@@ -67,7 +86,7 @@ public class LDY_GangController : MonoBehaviour
     {
         frozenTurnsRemaining = Mathf.Max(frozenTurnsRemaining, turns);
         SetIceOverlayActive(true);
-        Debug.Log($"[{gangData.gangName}] 얼음 - {frozenTurnsRemaining}턴 동안 정지");
+        Debug.Log($"[{config.gangName}] 얼음 - {frozenTurnsRemaining}턴 동안 정지");
     }
 
     private const float IceSizeAnimDuration = 1.2f;
@@ -124,7 +143,7 @@ public class LDY_GangController : MonoBehaviour
         if (prefab != null)
         {
             GameObject instance = Instantiate(prefab, transform);
-            instance.name = $"Ice_{gangData.gangName}";
+            instance.name = $"Ice_{config.gangName}";
             // 프리팹 만들 때 있던 씬 위치가 로컬 좌표에 남아있어서 어긋날 수 있다 - 중심에
             // 맞추고, z만 마커(반지름 0.35 구체) 앞으로 당긴다.
             instance.transform.localPosition = new Vector3(0f, 0f, -0.5f);
@@ -133,7 +152,7 @@ public class LDY_GangController : MonoBehaviour
 
         Material material = LDY_FreezeItemHandler.Instance != null ? LDY_FreezeItemHandler.Instance.IceMaterial : null;
         GameObject overlay = GameObject.CreatePrimitive(PrimitiveType.Quad);
-        overlay.name = $"Ice_{gangData.gangName}";
+        overlay.name = $"Ice_{config.gangName}";
         Destroy(overlay.GetComponent<Collider>());
 
         overlay.transform.SetParent(transform, false);
@@ -151,7 +170,7 @@ public class LDY_GangController : MonoBehaviour
     {
         noiseTurnsRemaining = Mathf.Max(noiseTurnsRemaining, turns);
         SetNoiseOverlayActive(true);
-        Debug.Log($"[{gangData.gangName}] 노이즈 - {noiseTurnsRemaining}턴 동안 시너지/상성 무효화");
+        Debug.Log($"[{config.gangName}] 노이즈 - {noiseTurnsRemaining}턴 동안 시너지/상성 무효화");
     }
 
     // 매 턴 호출: 노이즈 지속 턴을 줄이고, 0이 되면 오버레이를 끈다.
@@ -184,7 +203,7 @@ public class LDY_GangController : MonoBehaviour
     private GameObject CreateMaskedOverlay(string label, float scale, Color color, Texture2D mask)
     {
         GameObject overlay = GameObject.CreatePrimitive(PrimitiveType.Quad);
-        overlay.name = $"{label}_{gangData.gangName}";
+        overlay.name = $"{label}_{config.gangName}";
         Destroy(overlay.GetComponent<Collider>());
 
         overlay.transform.SetParent(transform, false);
@@ -240,9 +259,9 @@ public class LDY_GangController : MonoBehaviour
     // 이 경로를 강제로 따라간다.
     public void SetOverridePath(List<string> path)
     {
-        if (path == null || path.Count < 2 || path[0] != gangData.currentNodeId)
+        if (path == null || path.Count < 2 || path[0] != runtimeState.currentNodeId)
         {
-            Debug.LogWarning($"[{gangData.gangName}] 강제 경로 설정 실패 - 잘못된 경로");
+            Debug.LogWarning($"[{config.gangName}] 강제 경로 설정 실패 - 잘못된 경로");
             return;
         }
 
@@ -252,15 +271,15 @@ public class LDY_GangController : MonoBehaviour
         // 엉뚱한 인덱스로 새 경로를 읽어서 이상한 노드로 튄다.
         cachedPath = null;
         cachedPathIndex = 0;
-        Debug.Log($"[{gangData.gangName}] 강제 경로 설정: {string.Join(" -> ", path)}");
+        Debug.Log($"[{config.gangName}] 강제 경로 설정: {string.Join(" -> ", path)}");
     }
 
     private void ProcessOverridePath(Func<string, string, bool> isEdgeBlocked)
     {
         string nextNode = overridePath[overridePathIndex + 1];
-        if (isEdgeBlocked != null && isEdgeBlocked(gangData.currentNodeId, nextNode))
+        if (isEdgeBlocked != null && isEdgeBlocked(runtimeState.currentNodeId, nextNode))
         {
-            Debug.Log($"[{gangData.gangName}] 강제 경로 - 길이 막혀 대기");
+            Debug.Log($"[{config.gangName}] 강제 경로 - 길이 막혀 대기");
             return;
         }
 
@@ -282,10 +301,10 @@ public class LDY_GangController : MonoBehaviour
         transform.DOKill();
         DOTween.Kill(this);
 
-        gangData.currentNodeId = spawnNodeId;
-        gangData.currentFunds = gangData.maxFunds;
-        gangData.damageResistance = initialDamageResistance;
-        pursuing = false;
+        runtimeState.currentNodeId = spawnNodeId;
+        runtimeState.currentFunds = config.maxFunds;
+        runtimeState.damageResistance = config.initialDamageResistance;
+        runtimeState.pursuing = false;
         cachedPath = null;
         cachedPathIndex = 0;
 
@@ -298,7 +317,7 @@ public class LDY_GangController : MonoBehaviour
         noiseTurnsRemaining = 0;
         SetNoiseOverlayActive(false);
 
-        gangData.hackLockedUntilTurn = 0;
+        runtimeState.hackLockedUntilTurn = 0;
         movedOnTurn = -1;
 
         if (LDY_GraphMapSetup.Instance != null && LDY_GraphMapSetup.Instance.Nodes.TryGetValue(spawnNodeId, out LDY_MapNode node))
@@ -317,7 +336,7 @@ public class LDY_GangController : MonoBehaviour
 
     private void HandleGangDefeated(string gangId)
     {
-        if (gangData != null && gangData.gangName == gangId)
+        if (config != null && config.gangId == gangId)
             gameObject.SetActive(false);
     }
 
@@ -339,15 +358,15 @@ public class LDY_GangController : MonoBehaviour
 
     public void UpdateResistance(int turnCount)
     {
-        switch (gangData.type)
+        switch (config.type)
         {
             case LDY_GangType.Scale:
                 // 10턴마다 한 단계씩 오름(연속 상승 아님). 증가폭은 SO에서 갱단별로 조정 가능.
-                gangData.damageResistance = Mathf.Min(0.8f, (turnCount / 10) * gangData.resistanceGainPerTenTurns);
+                runtimeState.damageResistance = Mathf.Min(0.8f, (turnCount / 10) * config.resistanceGainPerTenTurns);
                 break;
 
             case LDY_GangType.Tanker:
-                gangData.damageResistance = 0.3f;
+                runtimeState.damageResistance = 0.3f;
                 break;
         }
     }
@@ -360,7 +379,7 @@ public class LDY_GangController : MonoBehaviour
             return;
 
         frozenTurnsRemaining--;
-        Debug.Log($"[{gangData.gangName}] 얼어서 이번 턴 정지 (남은 턴: {frozenTurnsRemaining})");
+        Debug.Log($"[{config.gangName}] 얼어서 이번 턴 정지 (남은 턴: {frozenTurnsRemaining})");
 
         if (frozenTurnsRemaining == 0)
             SetIceOverlayActive(false);
@@ -369,9 +388,9 @@ public class LDY_GangController : MonoBehaviour
     public void ProcessTurn(int turnCount, LDY_AStarPathfinder pathfinder, Func<string, string, bool> isEdgeBlocked)
     {
         // 미니게임(사전 해킹) 실패로 락 걸린 상태면 이번 턴은 아무 것도 안 한다.
-        if (turnCount < gangData.hackLockedUntilTurn)
+        if (turnCount < runtimeState.hackLockedUntilTurn)
         {
-            Debug.Log($"{gangData.gangName} 해킹 락 상태 (턴 {gangData.hackLockedUntilTurn}까지)");
+            Debug.Log($"{config.gangName} 해킹 락 상태 (턴 {runtimeState.hackLockedUntilTurn}까지)");
             return;
         }
 
@@ -391,10 +410,10 @@ public class LDY_GangController : MonoBehaviour
         }
 
         // 보급파/디버프파는 뭉친 갱단 있으면 자기 힘으로 안 움직이고 그쪽 MoveTo에 끌려간다.
-        if ((gangData.type == LDY_GangType.Support || gangData.type == LDY_GangType.Debuff) && GetClumpedPartners().Count > 0)
+        if ((config.type == LDY_GangType.Support || config.type == LDY_GangType.Debuff) && GetClumpedPartners().Count > 0)
             return;
 
-        switch (gangData.type)
+        switch (config.type)
         {
             case LDY_GangType.Direct:
                 ProcessDirect(pathfinder, isEdgeBlocked);
@@ -454,7 +473,7 @@ public class LDY_GangController : MonoBehaviour
 
         foreach (LDY_GangController partner in GetClumpedPartners())
         {
-            if (SynergyEffects.TryGetValue((gangData.type, partner.gangData.type), out var effect))
+            if (SynergyEffects.TryGetValue((config.type, partner.config.type), out var effect))
                 return effect;
         }
         return null;
@@ -463,14 +482,14 @@ public class LDY_GangController : MonoBehaviour
     // 이 갱단이 현재 확정된 시너지 효과에 참여 중인지 (위험도 판정 등에서 사용).
     public bool HasActiveSynergyEffect() => FindActiveSynergyEffect() != null;
 
-    // 실제 위험도 조회는 항상 이 메서드를 거친다 - gangData.baseRiskLevel을 직접 참조하지 말 것.
-    public LDY_RiskLevel GetCurrentRiskLevel() => gangData.GetEffectiveRiskLevel(HasActiveSynergyEffect());
+    // 실제 위험도 조회는 항상 이 메서드를 거친다 - config.baseRiskLevel을 직접 참조하지 말 것.
+    public LDY_RiskLevel GetCurrentRiskLevel() => config.GetEffectiveRiskLevel(HasActiveSynergyEffect());
 
     // 시너지(직진파+보급파 전용): 같은 노드에 보급파가 있으면 속도 2배 + 벽(간선 차단) 무시.
     private void ProcessDirect(LDY_AStarPathfinder pathfinder, Func<string, string, bool> isEdgeBlocked)
     {
         if (cachedPath == null)
-            cachedPath = pathfinder.FindPath(gangData.currentNodeId, playerBaseId);
+            cachedPath = pathfinder.FindPath(runtimeState.currentNodeId, playerBaseId);
 
         if (cachedPath == null)
             return;
@@ -485,7 +504,7 @@ public class LDY_GangController : MonoBehaviour
             string nextNode = cachedPath[cachedPathIndex + 1];
             if (effectiveBlocked != null && effectiveBlocked(cachedPath[cachedPathIndex], nextNode))
             {
-                Debug.Log($"[{gangData.gangName}] 직진파 - 길이 막혀 대기");
+                Debug.Log($"[{config.gangName}] 직진파 - 길이 막혀 대기");
                 break;
             }
 
@@ -500,7 +519,7 @@ public class LDY_GangController : MonoBehaviour
     // 지능파: 매 턴 재탐색해서 막힌 길 우회. 시너지는 아직 없음.
     private void ProcessIntelligent(LDY_AStarPathfinder pathfinder, Func<string, string, bool> isEdgeBlocked)
     {
-        List<string> path = pathfinder.FindPath(gangData.currentNodeId, playerBaseId, isEdgeBlocked);
+        List<string> path = pathfinder.FindPath(runtimeState.currentNodeId, playerBaseId, isEdgeBlocked);
         if (path == null || path.Count < 2)
             return;
 
@@ -510,19 +529,22 @@ public class LDY_GangController : MonoBehaviour
     // 탐욕파: 훔친 돈 많을수록 빨라짐. 시너지는 아직 없음.
     private void ProcessGreedy(LDY_AStarPathfinder pathfinder, Func<string, string, bool> isEdgeBlocked)
     {
-        int stolenSoFar = gangData.maxFunds - gangData.currentFunds;
+        int stolenSoFar = config.maxFunds - runtimeState.currentFunds;
         int speed = 1 + stolenSoFar / 250;
         ProcessSpeedMove(pathfinder, isEdgeBlocked, speed);
     }
 
     // 디버프파: 기지 말고 가장 가까운 아무 갱단이나 쫓아간다. 이번 스펙 범위 밖이라 그대로 둠.
+    // TODO(임시 구현): 기획서 원래 의도는 '노드에서 추적 안 하고 독립적으로
+    //  존재 + 다크웹 물가 조작'이었으나 이번 스펙 범위 밖이라 임시로
+    //  '가장 가까운 갱단 추적'으로 대체돼 있음. 디버프파 최종 스펙 확정 필요.
     private void ProcessSeekNearestGang(LDY_AStarPathfinder pathfinder, Func<string, string, bool> isEdgeBlocked)
     {
         string targetNodeId = FindNearestOtherGangNodeId(pathfinder);
-        if (targetNodeId == null || targetNodeId == gangData.currentNodeId)
+        if (targetNodeId == null || targetNodeId == runtimeState.currentNodeId)
             return;
 
-        List<string> path = pathfinder.FindPath(gangData.currentNodeId, targetNodeId, isEdgeBlocked);
+        List<string> path = pathfinder.FindPath(runtimeState.currentNodeId, targetNodeId, isEdgeBlocked);
         if (path == null || path.Count < 2)
             return;
 
@@ -541,11 +563,11 @@ public class LDY_GangController : MonoBehaviour
             if (other == this || !other.gameObject.activeSelf)
                 continue;
 
-            List<string> path = pathfinder.FindPath(gangData.currentNodeId, other.gangData.currentNodeId);
+            List<string> path = pathfinder.FindPath(runtimeState.currentNodeId, other.runtimeState.currentNodeId);
             if (path != null && path.Count < bestHops)
             {
                 bestHops = path.Count;
-                nearest = other.gangData.currentNodeId;
+                nearest = other.runtimeState.currentNodeId;
             }
         }
         return nearest;
@@ -556,10 +578,10 @@ public class LDY_GangController : MonoBehaviour
     private void ProcessSeekSynergyPartner(LDY_AStarPathfinder pathfinder, Func<string, string, bool> isEdgeBlocked)
     {
         string targetNodeId = FindNearestSynergyPartnerNodeId(pathfinder);
-        if (targetNodeId == null || targetNodeId == gangData.currentNodeId)
+        if (targetNodeId == null || targetNodeId == runtimeState.currentNodeId)
             return;
 
-        List<string> path = pathfinder.FindPath(gangData.currentNodeId, targetNodeId, isEdgeBlocked);
+        List<string> path = pathfinder.FindPath(runtimeState.currentNodeId, targetNodeId, isEdgeBlocked);
         if (path == null || path.Count < 2)
             return;
 
@@ -575,9 +597,9 @@ public class LDY_GangController : MonoBehaviour
         var partnerTypes = new HashSet<LDY_GangType>();
         foreach (var key in SynergyEffects.Keys)
         {
-            if (key.Item1 == gangData.type)
+            if (key.Item1 == config.type)
                 partnerTypes.Add(key.Item2);
-            else if (key.Item2 == gangData.type)
+            else if (key.Item2 == config.type)
                 partnerTypes.Add(key.Item1);
         }
         if (partnerTypes.Count == 0)
@@ -587,14 +609,14 @@ public class LDY_GangController : MonoBehaviour
         int bestHops = int.MaxValue;
         foreach (LDY_GangController other in LDY_GangManager.Instance.GetAllGangControllers())
         {
-            if (other == this || !other.gameObject.activeSelf || !partnerTypes.Contains(other.gangData.type))
+            if (other == this || !other.gameObject.activeSelf || !partnerTypes.Contains(other.config.type))
                 continue;
 
-            List<string> path = pathfinder.FindPath(gangData.currentNodeId, other.gangData.currentNodeId);
+            List<string> path = pathfinder.FindPath(runtimeState.currentNodeId, other.runtimeState.currentNodeId);
             if (path != null && path.Count < bestHops)
             {
                 bestHops = path.Count;
-                nearest = other.gangData.currentNodeId;
+                nearest = other.runtimeState.currentNodeId;
             }
         }
         return nearest;
@@ -609,16 +631,24 @@ public class LDY_GangController : MonoBehaviour
 
         foreach (LDY_GangController other in LDY_GangManager.Instance.GetAllGangControllers())
         {
-            if (other != this && other.gameObject.activeSelf && other.gangData.currentNodeId == gangData.currentNodeId)
+            if (other != this && other.gameObject.activeSelf && other.runtimeState.currentNodeId == runtimeState.currentNodeId)
                 result.Add(other);
         }
         return result;
     }
 
-    // 탐욕파/왕귀파 공용: 경로를 매 턴 재탐색해서 속도만큼 전진, 막힌 간선 만나면 거기서 멈춤.
+    // 탐욕파/왕귀파/탱커파/불예측파(기본 이동) 공용: 경로를 매 턴 재탐색해서 속도만큼
+    // 전진, 막힌 간선 만나면 거기서 멈춤. ProcessDirect와 마찬가지로 시너지가 잡혀 있으면
+    // 속도 배율/벽 무시를 여기서도 반영한다 - 지금은 (직진파,보급파)만 있어서 이 메서드를
+    // 쓰는 타입들엔 사실상 영향이 없지만, 나중에 시너지 표가 채워지면 바로 적용된다.
     private void ProcessSpeedMove(LDY_AStarPathfinder pathfinder, Func<string, string, bool> isEdgeBlocked, int speed)
     {
-        List<string> path = pathfinder.FindPath(gangData.currentNodeId, playerBaseId, isEdgeBlocked);
+        var effect = FindActiveSynergyEffect();
+        if (effect.HasValue)
+            speed *= Mathf.RoundToInt(effect.Value.speedMultiplier);
+        Func<string, string, bool> effectiveBlocked = (effect.HasValue && effect.Value.ignoreBlockedEdges) ? null : isEdgeBlocked;
+
+        List<string> path = pathfinder.FindPath(runtimeState.currentNodeId, playerBaseId, effectiveBlocked);
         if (path == null || path.Count < 2)
             return;
 
@@ -626,7 +656,7 @@ public class LDY_GangController : MonoBehaviour
         int steps = 0;
         while (steps < speed && index + 1 < path.Count)
         {
-            if (isEdgeBlocked != null && isEdgeBlocked(path[index], path[index + 1]))
+            if (effectiveBlocked != null && effectiveBlocked(path[index], path[index + 1]))
                 break;
 
             index++;
@@ -646,7 +676,7 @@ public class LDY_GangController : MonoBehaviour
         cachedPath = null;
         cachedPathIndex = 0;
 
-        List<string> path = pathfinder.FindPath(gangData.currentNodeId, playerBaseId, isEdgeBlocked);
+        List<string> path = pathfinder.FindPath(runtimeState.currentNodeId, playerBaseId, isEdgeBlocked);
         if (path == null || path.Count < 2)
             return;
 
@@ -664,7 +694,7 @@ public class LDY_GangController : MonoBehaviour
         if (index > 0)
             MoveTo(path[index]);
 
-        Debug.Log($"[{gangData.gangName}] 금고 한도 초과 - {moved}칸 강제 전진");
+        Debug.Log($"[{config.gangName}] 금고 한도 초과 - {moved}칸 강제 전진");
     }
 
     // 불예측파: 40% 확률로 인접 노드 중 무작위 이동, 그 외에는 평범하게 A* 경로로 한 칸 전진.
@@ -672,11 +702,11 @@ public class LDY_GangController : MonoBehaviour
     {
         if (UnityEngine.Random.value < 0.4f)
         {
-            string randomNode = RandomNeighbor(gangData.currentNodeId, isEdgeBlocked);
+            string randomNode = RandomNeighbor(runtimeState.currentNodeId, isEdgeBlocked);
             if (randomNode == null)
                 return;
 
-            Debug.Log($"[{gangData.gangName}] 불예측파 - 무작위 이동");
+            Debug.Log($"[{config.gangName}] 불예측파 - 무작위 이동");
             MoveTo(randomNode);
         }
         else
@@ -702,14 +732,14 @@ public class LDY_GangController : MonoBehaviour
 
     private void MoveTo(string nodeId)
     {
-        Debug.Log($"[{gangData.gangName}] {gangData.currentNodeId} -> {nodeId} 이동");
+        Debug.Log($"[{config.gangName}] {runtimeState.currentNodeId} -> {nodeId} 이동");
 
         // 뭉쳐있던 보급파/디버프파 동행자 중 얼지 않고 이번 턴에 아직 안 움직인 애들은
         // 같이 데려간다.
         var companions = new List<LDY_GangController>();
         foreach (LDY_GangController partner in GetClumpedPartners())
         {
-            bool isFollowerType = partner.gangData.type == LDY_GangType.Support || partner.gangData.type == LDY_GangType.Debuff;
+            bool isFollowerType = partner.config.type == LDY_GangType.Support || partner.config.type == LDY_GangType.Debuff;
             bool free = partner.frozenTurnsRemaining <= 0 && partner.movedOnTurn != lastTurnCount;
             if (isFollowerType && free)
                 companions.Add(partner);
@@ -719,14 +749,14 @@ public class LDY_GangController : MonoBehaviour
         LDY_MapNode toNode = null;
         if (LDY_GraphMapSetup.Instance != null)
         {
-            LDY_GraphMapSetup.Instance.Nodes.TryGetValue(gangData.currentNodeId, out fromNode);
+            LDY_GraphMapSetup.Instance.Nodes.TryGetValue(runtimeState.currentNodeId, out fromNode);
             LDY_GraphMapSetup.Instance.Nodes.TryGetValue(nodeId, out toNode);
         }
 
-        gangData.currentNodeId = nodeId;
+        runtimeState.currentNodeId = nodeId;
         movedOnTurn = lastTurnCount;
 
-        Color trailColor = GetGangColor(gangData.type);
+        Color trailColor = GetGangColor(config.type);
         if (fromNode != null && toNode != null)
         {
             transform.DOKill();
@@ -737,7 +767,7 @@ public class LDY_GangController : MonoBehaviour
         if (nodeId == playerBaseId)
         {
             pursuing = false;
-            LDY_GameEvents.GangReachedBase(gangData.gangName);
+            LDY_GameEvents.GangReachedBase(config.gangId);
         }
 
         // 동행자도 같은 색(대표 갱단 색)으로 트레일을 칠해서 같이 움직인 티가 나게 한다.
@@ -751,17 +781,17 @@ public class LDY_GangController : MonoBehaviour
         if (movedOnTurn == turnCount)
             return;
 
-        Debug.Log($"[{gangData.gangName}] {gangData.currentNodeId} -> {nodeId} 동행 이동");
+        Debug.Log($"[{config.gangName}] {runtimeState.currentNodeId} -> {nodeId} 동행 이동");
 
         LDY_MapNode fromNode = null;
         LDY_MapNode toNode = null;
         if (LDY_GraphMapSetup.Instance != null)
         {
-            LDY_GraphMapSetup.Instance.Nodes.TryGetValue(gangData.currentNodeId, out fromNode);
+            LDY_GraphMapSetup.Instance.Nodes.TryGetValue(runtimeState.currentNodeId, out fromNode);
             LDY_GraphMapSetup.Instance.Nodes.TryGetValue(nodeId, out toNode);
         }
 
-        gangData.currentNodeId = nodeId;
+        runtimeState.currentNodeId = nodeId;
         movedOnTurn = turnCount;
         lastTurnCount = turnCount;
 
@@ -775,7 +805,7 @@ public class LDY_GangController : MonoBehaviour
         if (nodeId == playerBaseId)
         {
             pursuing = false;
-            LDY_GameEvents.GangReachedBase(gangData.gangName);
+            LDY_GameEvents.GangReachedBase(config.gangId);
         }
     }
 
@@ -787,7 +817,7 @@ public class LDY_GangController : MonoBehaviour
         Vector3 to3 = new Vector3(toNode.position.x, toNode.position.y, -0.05f);
 
         LineRenderer trail = LDY_MapVisualFactory.CreateEdgeLine(
-            $"Trail_{gangData.gangName}_{fromNode.id}-{toNode.id}", parent, from3, from3, 0.08f, color);
+            $"Trail_{config.gangName}_{fromNode.id}-{toNode.id}", parent, from3, from3, 0.08f, color);
 
         FlashNode(fromNode.id, color);
 
