@@ -7,8 +7,8 @@ public class LSO_ColpoUI : MonoBehaviour
     private static readonly int Transparent = Shader.PropertyToID("_Transparent");
     [SerializeField] private GameObject handle;
 
-    private float ColpoLimit => colpoManager.ColpoLimit;
-    private float Current => colpoManager.Current;
+    private double ColpoLimit => colpoManager.ColpoLimit;
+    private double Current => colpoManager.Current;
     private bool Holding => colpoManager.holding;
     private bool is80;
 

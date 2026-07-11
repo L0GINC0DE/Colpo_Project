@@ -17,7 +17,7 @@ namespace _01_Scripts.LSO
         /// </summary>
         public static Action<ColpoResultType, int, LDY_GangType> OnColpoResult;
 
-        public int ColpoMax { get; private set; } = 1000;
+        public int ColpoMax { get; private set; } = 10;
         private int ColpoMin { get; set; } = 0;
         public int ColpoLimit{get; private set;}
 
@@ -27,7 +27,7 @@ namespace _01_Scripts.LSO
 
         public bool isColpoTime;
         public bool holding;
-        public bool ColpoTimeEnd;
+        public bool colpoTimeEnd;
 
         public enum ColpoResultType
         {
@@ -66,15 +66,15 @@ namespace _01_Scripts.LSO
 
         public int ResetColpo()
         {
-            ColpoLimit = Random.Range(ColpoMin, ColpoMax);
+            ColpoLimit = Random.Range(ColpoMin, ColpoMax + 1) * 100;
             Current = 0;
             
             return ColpoLimit;
         }
 
-        public int CurrentUp()
+        public int CurrentUp(int value = 1)
         {
-            Current += 1;
+            Current += value;
             return Current;
         }
     }
