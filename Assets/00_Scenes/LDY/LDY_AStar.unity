@@ -2226,7 +2226,7 @@ MonoBehaviour:
     - gD
     - gG
   - id: gA
-    position: {x: 0, y: 6}
+    position: {x: -1.033978, y: 5.9310713}
     isPlayerBase: 0
     connectedNodeIds:
     - j1
