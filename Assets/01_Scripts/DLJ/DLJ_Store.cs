@@ -15,11 +15,18 @@ public class DLJ_Store : MonoBehaviour
     [TextArea(0, 15)]
     [SerializeField] private string[] desc;
 
+    [SerializeField] private TextMeshProUGUI currentMoney;
+
+    private int money = 100;
     private int index = 0;
+
+    private int skills = 0;
     
     private string lockedText;
     private int lockedLength;
     private Coroutine showTextCoroutine;
+
+    private bool onMain = true;
     
     private void Awake()
     {
@@ -32,10 +39,13 @@ public class DLJ_Store : MonoBehaviour
         inputField.onValueChanged.AddListener(OnChanged);
         inputField.onSubmit.AddListener(OnEnter);
         inputField.onSelect.AddListener(_ => MoveCaretToEnd());
+
+        //money = LSO_MoneyManager.Instance.Money;
     }
 
     private void Update()
     {
+        currentMoney.text = money.ToString();
         if (inputField.isFocused && inputField.caretPosition < lockedLength)
             MoveCaretToEnd();
         
@@ -79,9 +89,29 @@ public class DLJ_Store : MonoBehaviour
             if (showTextCoroutine != null)
                 StopCoroutine(showTextCoroutine);
 
-            showTextCoroutine = StartCoroutine(ShowText(desc[index]));
             index++;
+            showTextCoroutine = StartCoroutine(ShowText(desc[index]));
+            onMain = false;
         }
+
+        foreach (string skill in skillName)
+        {
+            if (string.Equals(skill, value, StringComparison.OrdinalIgnoreCase) && !onMain)
+            {
+                skills++;
+                Debug.Log(skills);
+                inputField.SetTextWithoutNotify(lockedText);
+            }
+        }
+
+        if (string.Equals(value, "Leave", StringComparison.OrdinalIgnoreCase) && !onMain)
+        {
+            onMain = true;
+            index = 0;
+            StartCoroutine(ShowText(desc[index]));
+        }
+        
+        StartCoroutine(SelectIF());
     }
 
     private IEnumerator ShowText(string value)
@@ -92,15 +122,23 @@ public class DLJ_Store : MonoBehaviour
         foreach (var letter in value)
         {
             inputField.SetTextWithoutNotify(inputField.text + letter);
-            yield return new WaitForSeconds(0.02f);
+            yield return new WaitForSeconds(0.01f);
         }
 
         lockedText = inputField.text;
         lockedLength = lockedText.Length;
         MoveCaretToEnd();
         inputField.readOnly = false;
-        EventSystem.current?.SetSelectedGameObject(inputField.gameObject);
-        inputField.ActivateInputField();
+        StartCoroutine(SelectIF());
         showTextCoroutine = null;
+    }
+
+    private IEnumerator SelectIF()
+    {
+        yield return null;
+        EventSystem.current?.SetSelectedGameObject(inputField.gameObject);
+        inputField.Select();
+        inputField.ActivateInputField();
+        MoveCaretToEnd();
     }
 }
